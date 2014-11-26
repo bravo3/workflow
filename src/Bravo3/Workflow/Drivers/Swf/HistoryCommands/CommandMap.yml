@@ -1,0 +1,72 @@
+# This file maps out SWF workflow events against handler commands that will populate workflow history
+# All event types are listed, those commented out are ignored and not handled/recorded in any way
+
+WorkflowExecutionStarted:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionStartedCommand
+    args: workflowExecutionStartedEventAttributes
+WorkflowExecutionCompleted:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionCompletedCommand
+    args: workflowExecutionCompletedEventAttributes
+WorkflowExecutionFailed:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionFailedCommand
+    args: workflowExecutionFailedEventAttributes
+WorkflowExecutionTimedOut:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionTimedOutCommand
+    args: workflowExecutionTimedOutEventAttributes
+WorkflowExecutionCanceled:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionCanceledCommand
+    args: workflowExecutionCanceledEventAttributes
+WorkflowExecutionTerminated:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionTerminatedCommand
+    args: workflowExecutionTerminatedEventAttributes
+ScheduleActivityTaskFailed:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ScheduleActivityTaskFailedCommand
+    args: scheduleActivityTaskFailedEventAttributes
+ActivityTaskScheduled:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskScheduledCommand
+    args: activityTaskScheduledEventAttributes
+ActivityTaskStarted:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskStartedCommand
+    args: activityTaskStartedEventAttributes
+ActivityTaskCompleted:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskCompletedCommand
+    args: activityTaskCompletedEventAttributes
+ActivityTaskFailed:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskFailedCommand
+    args: activityTaskFailedEventAttributes
+ActivityTaskTimedOut:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskTimedOutCommand
+    args: activityTaskTimedOutEventAttributes
+ActivityTaskCanceled:
+    class: \Bravo3\Workflow\Drivers\Swf\HistoryCommands\ActivityTaskCanceledCommand
+    args: activityTaskCanceledEventAttributes
+
+#ActivityTaskCancelRequested:
+#RequestCancelActivityTaskFailed:
+#WorkflowExecutionSignaled:
+#MarkerRecorded:
+#TimerStarted:
+#StartTimerFailed:
+#TimerFired:
+#TimerCanceled:
+#CancelTimerFailed:
+#StartChildWorkflowExecutionInitiated:
+#StartChildWorkflowExecutionFailed:
+#ChildWorkflowExecutionStarted:
+#ChildWorkflowExecutionCompleted:
+#ChildWorkflowExecutionFailed:
+#ChildWorkflowExecutionTimedOut:
+#ChildWorkflowExecutionCanceled:
+#ChildWorkflowExecutionTerminated:
+#SignalExternalWorkflowExecutionInitiated:
+#ExternalWorkflowExecutionSignaled:
+#SignalExternalWorkflowExecutionFailed:
+#RequestCancelExternalWorkflowExecutionInitiated:
+#ExternalWorkflowExecutionCancelRequested:
+#RequestCancelExternalWorkflowExecutionFailed:
+#WorkflowExecutionContinuedAsNew:
+#WorkflowExecutionCancelRequested:
+#DecisionTaskScheduled:
+#DecisionTaskStarted:
+#DecisionTaskCompleted:
+#DecisionTaskTimedOut:

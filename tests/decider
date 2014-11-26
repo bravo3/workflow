@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+use Bravo3\Properties\Conf;
+use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
+use Bravo3\Workflow\Memory\RedisMemoryPool;
+use Bravo3\Workflow\Services\Decider;
+use Bravo3\Workflow\Tests\Resources\TestLogger;
+
+require_once('bootstrap.php');
+
+Conf::init(__DIR__.'/config');
+$conf = Conf::getInstance();
+
+$logger = new TestLogger();
+
+$logger->info('Creating memory pool..');
+$pool = new RedisMemoryPool('test', 600, $conf['redis']);
+
+$logger->info('Creating decider..');
+$decider = new Decider();
+
+$logger->info('Creating SWF decision engine..');
+$decision_engine = new SwfDecisionEngine();
+
+$logger->info('Subscribing..');
+$decision_engine->addSubscriber($decider);
+
+$decision_engine->daemonise();
+

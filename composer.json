@@ -1,0 +1,39 @@
+{
+    "name": "bravo3/workflow",
+    "type": "library",
+    "description": "Workflow decision engine",
+    "keywords": ["workflow", "decider", "swf"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jordon Scott",
+            "email": "jordon@novatek.com.au"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "": ["src/", "tests/"] }
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "eloquent/enumeration": "~5.1",
+        "psr/log": "~1.0",
+        "predis/predis": "~1.0",
+        "symfony/event-dispatcher": "~2.5",
+        "symfony/yaml": "~2.5",
+        "aws/aws-sdk-php": "~2.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.1.0",
+        "bravo3/properties": "~1.0"
+    },
+    "scripts": {
+        "post-install-cmd": [
+        ],
+        "post-update-cmd": [
+        ]
+    },
+    "config": {
+        "bin-dir": "bin",
+        "preferred-install": "dist"
+    }
+}
