@@ -8,7 +8,7 @@ use Bravo3\Workflow\Events\WorkflowEvent;
 use Bravo3\Workflow\Exceptions\InsufficientDataException;
 use Guzzle\Service\Resource\Model;
 
-class SwfEngine extends AbstractEngine
+abstract class SwfEngine extends AbstractEngine
 {
     const DEFAULT_IDENTITY = 'Bravo3 Workflow Engine';
 

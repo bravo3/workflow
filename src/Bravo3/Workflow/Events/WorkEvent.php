@@ -14,6 +14,16 @@ class WorkEvent extends WorkflowEvent
     protected $input;
 
     /**
+     * @var string
+     */
+    protected $activity_name;
+
+    /**
+     * @var string
+     */
+    protected $activity_version;
+
+    /**
      * Get ActivityId
      *
      * @return string
@@ -54,6 +64,50 @@ class WorkEvent extends WorkflowEvent
     public function setInput($input)
     {
         $this->input = $input;
+        return $this;
+    }
+
+    /**
+     * Get ActivityName
+     *
+     * @return string
+     */
+    public function getActivityName()
+    {
+        return $this->activity_name;
+    }
+
+    /**
+     * Set ActivityName
+     *
+     * @param string $activity_name
+     * @return $this
+     */
+    public function setActivityName($activity_name)
+    {
+        $this->activity_name = $activity_name;
+        return $this;
+    }
+
+    /**
+     * Get ActivityVersion
+     *
+     * @return string
+     */
+    public function getActivityVersion()
+    {
+        return $this->activity_version;
+    }
+
+    /**
+     * Set ActivityVersion
+     *
+     * @param string $activity_version
+     * @return $this
+     */
+    public function setActivityVersion($activity_version)
+    {
+        $this->activity_version = $activity_version;
         return $this;
     }
 }

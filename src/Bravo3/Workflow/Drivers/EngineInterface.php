@@ -17,15 +17,17 @@ interface EngineInterface extends EventDispatcherInterface, LoggerAwareInterface
     /**
      * Check for a single task, firing an event if found
      *
+     * @param string $task_list
      * @return void
      */
-    public function checkForTask();
+    public function checkForTask($task_list);
 
     /**
      * Enter a loop, endlessly checking for a decision
      *
+     * @param string $task_list
      * @param FlagInterface $abort_flag A flag used to break the daemon execution
      * @return void
      */
-    public function daemonise(FlagInterface $abort_flag = null);
+    public function daemonise($task_list, FlagInterface $abort_flag = null);
 }

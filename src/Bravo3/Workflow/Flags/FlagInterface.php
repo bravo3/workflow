@@ -23,6 +23,9 @@ interface FlagInterface
     /**
      * Check if the flag has been raised
      *
+     * You may have custom logic here, such as checking a filesystem or cache key, but if raise() has been called this
+     * function must return true unless lower() has been subsequently called.
+     *
      * @return bool
      */
     public function isRaised();

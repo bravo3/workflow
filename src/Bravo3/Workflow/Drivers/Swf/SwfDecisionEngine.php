@@ -3,7 +3,7 @@ namespace Bravo3\Workflow\Drivers\Swf;
 
 use Bravo3\Workflow\Drivers\DecisionEngineInterface;
 use Bravo3\Workflow\Drivers\Swf\HistoryCommands\HistoryCommandInterface;
-use Bravo3\Workflow\Drivers\Swf\HistoryCommands\WorkflowExecutionStartedCommand;
+use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\DecisionEvent;
 use Bravo3\Workflow\Workflow\WorkflowHistory;
 use Guzzle\Service\Resource\Model;
@@ -25,9 +25,10 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
     /**
      * Check for a decision task
      *
+     * @param string $task_list
      * @return void
      */
-    public function checkForTask()
+    public function checkForTask($task_list)
     {
         /** @var DecisionEvent */
         $event = null;
@@ -37,7 +38,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
             $args = [
                 'domain'   => $this->getConfig('domain', null, true),
                 'taskList' => [
-                    'name' => $this->getConfig('tasklist', null, true),
+                    'name' => $task_list,
                 ],
                 'identity' => $this->getConfig('identity', static::DEFAULT_IDENTITY, false),
             ];
@@ -49,15 +50,25 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
             // Query SWF for task/more history
             $model = $this->swf->pollForDecisionTask($args);
 
-            if ($event) {
-                $this->addHistory($event, $model);
-            } else {
-                $event = new DecisionEvent();
-                $this->hydrateWorkflowEvent($event, $model);
-                $this->addHistory($event, $model);
+            if ($model->get('startedEventId')) {
+                if ($event) {
+                    $this->addHistory($event, $model);
+                } else {
+                    $event = new DecisionEvent();
+                    $this->hydrateWorkflowEvent($event, $model);
+                    $this->addHistory($event, $model);
+                }
             }
 
         } while ($token = $model->get('nextPageToken'));
+
+        if ($event) {
+            $this->logger->info(
+                'Found decision task for "'.$event->getWorkflowName()."'",
+                $this->createEventContext($event)
+            );
+            $this->dispatch(Event::TASK_DECISION_READY, $event);
+        }
     }
 
     /**

@@ -11,21 +11,22 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
     /**
      * Check for a decision task
      *
+     * @param string $task_list
      * @return void
      */
-    public function checkForTask()
+    public function checkForTask($task_list)
     {
         $task = $this->swf->pollForActivityTask(
             [
                 'domain'   => $this->getConfig('domain', null, true),
                 'taskList' => [
-                    'name' => $this->getConfig('tasklist', null, true),
+                    'name' => $task_list,
                 ],
                 'identity' => $this->getConfig('identity', static::DEFAULT_IDENTITY, false),
             ]
         );
 
-        if ($task) {
+        if ($task->get('startedEventId')) {
             $this->processWorkTask($task);
         }
     }
@@ -45,8 +46,19 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
         $this->hydrateWorkflowEvent($event, $model);
         $event->setActivityId($model->get('activityId'));
         $event->setInput($model->get('input'));
+        $event->setActivityName($model->get('activityType')['name']);
+        $event->setActivityVersion($model->get('activityType')['version']);
 
-        $this->logger->info('Found work task for "'.$event->getActivityId()."'", $this->createEventContext($event));
+        $context = $this->createEventContext($event);
+
+        $context['activity_name']    = $event->getActivityName();
+        $context['activity_version'] = $event->getActivityVersion();
+        $context['activity_id']      = $event->getActivityId();
+
+        $this->logger->info(
+            'Found work task for "'.$event->getWorkflowName().'/'.$event->getActivityId()."'",
+            $context
+        );
         $this->dispatch(Event::TASK_WORK_READY, $event);
     }
 }

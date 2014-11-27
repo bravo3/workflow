@@ -2,6 +2,8 @@
 <?php
 use Bravo3\Properties\Conf;
 use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
+use Bravo3\Workflow\Enum\Event;
+use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
 use Bravo3\Workflow\Services\Decider;
 use Bravo3\Workflow\Tests\Resources\TestLogger;
@@ -13,17 +15,24 @@ $conf = Conf::getInstance();
 
 $logger = new TestLogger();
 
-$logger->info('Creating memory pool..');
+$onPoll = function(PollingEvent $event) use ($logger) {
+    $logger->info("Polling..");
+};
+
+$logger->debug('Creating memory pool..');
 $pool = new RedisMemoryPool('test', 600, $conf['redis']);
 
-$logger->info('Creating decider..');
+$logger->debug('Creating SWF decision engine..');
+$decision_engine = new SwfDecisionEngine($conf['aws'], $conf['swf']);
+
+$logger->debug('Creating decider..');
 $decider = new Decider();
 
-$logger->info('Creating SWF decision engine..');
-$decision_engine = new SwfDecisionEngine();
-
-$logger->info('Subscribing..');
+$logger->debug('Subscribing..');
 $decision_engine->addSubscriber($decider);
+$decision_engine->addListener(Event::DAEMON_POLLING, $onPoll);
 
-$decision_engine->daemonise();
+$logger->debug('Starting daemon..');
+$decision_engine->daemonise('test-decision');
+
 

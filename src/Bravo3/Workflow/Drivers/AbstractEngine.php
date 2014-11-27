@@ -1,6 +1,8 @@
 <?php
 namespace Bravo3\Workflow\Drivers;
 
+use Bravo3\Workflow\Enum\Event;
+use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Events\WorkflowEvent;
 use Bravo3\Workflow\Flags\FlagInterface;
 use Bravo3\Workflow\Flags\SimpleFlag;
@@ -63,21 +65,29 @@ abstract class AbstractEngine extends EventDispatcher
     /**
      * Enter a loop, endlessly checking for a decision
      *
+     * @param string        $task_list
      * @param FlagInterface $abort_flag A flag used to break the daemon execution
      * @return void
      */
-    public function daemonise(FlagInterface $abort_flag = null)
+    public function daemonise($task_list, FlagInterface $abort_flag = null)
     {
         $this->setAbortFlag($abort_flag);
 
         do {
-            $this->checkForTask();
-        } while (!$this->getAbortFlag()->isRaised());
+            // Dispatch the polling event, allowing other logic to abort the process
+            $this->dispatch(Event::DAEMON_POLLING, new PollingEvent($this->getAbortFlag()));
+
+            // Flag has been raised, abort
+            if ($this->getAbortFlag()->isRaised()) {
+                break;
+            }
+
+            // Poll for a task
+            $this->checkForTask($task_list);
+        } while (true);
     }
 
-    public function checkForTask()
-    {
-    }
+    abstract public function checkForTask($task_list);
 
     /**
      * Create a context for logging, containing event details

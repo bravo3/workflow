@@ -17,5 +17,11 @@ class TestLogger extends AbstractLogger implements LoggerInterface
     public function log($level, $message, array $context = [])
     {
         echo $message."\n";
+
+        if ($context) {
+            foreach ($context as $key => $value) {
+                echo " - [".$key."]: ".$value."\n";
+            }
+        }
     }
 }
