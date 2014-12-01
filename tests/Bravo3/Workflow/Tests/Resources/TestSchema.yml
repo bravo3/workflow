@@ -1,0 +1,47 @@
+workflow:
+    start_to_close_timeout: 60
+    domain: test
+    tasklist: test
+
+tasks:
+    -:
+        requires:
+            activity:
+                test-activity: 0
+        class: Bravo3\Workflow\Tests\Resources\Activities\AlphaActivity
+        input: alpha
+        control: alpha
+        activity_name: test-activity
+        activity_version: 1
+        schedule_to_start_timeout: 5
+        schedule_to_close_timeout: 15
+        start_to_close_timeout: 10
+        heartbeat_timeout: 10
+    -:
+        requires:
+            activity:
+                test-activity: 1
+        class: Bravo3\Workflow\Tests\Resources\Activities\BravoActivity
+        input: bravo
+        control: bravo
+        activity_name: test-activity
+        activity_version: 1
+        schedule_to_start_timeout: 5
+        schedule_to_close_timeout: 15
+        start_to_close_timeout: 10
+        heartbeat_timeout: 10
+    -:
+        requires:
+            activity:
+                test-activity: 2
+            control:
+                bravo: 1
+        class: Bravo3\Workflow\Tests\Resources\Activities\CharlieActivity
+        input: charlie
+        control: charlie
+        activity_name: test-activity
+        activity_version: 1
+        schedule_to_start_timeout: 5
+        schedule_to_close_timeout: 15
+        start_to_close_timeout: 10
+        heartbeat_timeout: 10

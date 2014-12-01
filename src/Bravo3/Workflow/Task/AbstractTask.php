@@ -1,12 +1,25 @@
 <?php
 namespace Bravo3\Workflow\Task;
 
-abstract class AbstractTask
+use Bravo3\Workflow\Memory\MemoryPoolInterface;
+
+abstract class AbstractTask implements TaskInterface
 {
     /**
-     * @var InputParameterInterface
+     * @var array
      */
     protected $input;
+
+    /**
+     * @var MemoryPoolInterface
+     */
+    protected $memory_pool;
+
+    public function __construct(MemoryPoolInterface $memory_pool, array $input)
+    {
+        $this->memory_pool = $memory_pool;
+        $this->input       = $input;
+    }
 
     /**
      * Code to be executed before scheduling the task
@@ -42,16 +55,5 @@ abstract class AbstractTask
      */
     public function done()
     {
-    }
-
-    /**
-     * Set the input for the task
-     *
-     * @param InputParameterInterface $input
-     * @return void
-     */
-    public function setInput(InputParameterInterface $input)
-    {
-        $this->input = $input;
     }
 }

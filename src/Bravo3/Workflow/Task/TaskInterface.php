@@ -1,52 +1,44 @@
 <?php
 namespace Bravo3\Workflow\Task;
 
-use Bravo3\Workflow\Worker\WorkerParameterInterface;
+use Bravo3\Workflow\Memory\MemoryPoolInterface;
 
 interface TaskInterface
 {
-    public function __construct();
+    public function __construct(MemoryPoolInterface $memory_pool, array $input);
 
     /**
-     * Code to be executed before scheduling the task
+     * Code to be executed by the WORKER when the task is run
+     *
+     * @return void
+     */
+    public function execute();
+
+    /**
+     * Code to be executed by the DECIDER before scheduling the task
      *
      * @return void
      */
     public function pre();
 
     /**
-     * Code executed on workflow success
+     * Code executed by the DECIDER on workflow success
      *
      * @return void
      */
     public function succeed();
 
     /**
-     * Code executed on workflow failure
+     * Code executed by the DECIDER on workflow failure
      *
      * @return void
      */
     public function failed();
 
     /**
-     * Code executed when a workflow task completes, regardless of success
+     * Code executed by the DECIDER when a workflow task completes, regardless of success
      *
      * @return void
      */
     public function done();
-
-    /**
-     * Set the input for the task
-     *
-     * @param InputParameterInterface $input
-     * @return void
-     */
-    public function setInput(InputParameterInterface $input);
-
-    /**
-     * Get the parameters that are required by the workflow controller to create a new task
-     *
-     * @return WorkerParameterInterface
-     */
-    public function getWorkerParameters();
 }

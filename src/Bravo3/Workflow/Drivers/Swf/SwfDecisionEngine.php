@@ -5,6 +5,7 @@ use Bravo3\Workflow\Drivers\DecisionEngineInterface;
 use Bravo3\Workflow\Drivers\Swf\HistoryCommands\HistoryCommandInterface;
 use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\DecisionEvent;
+use Bravo3\Workflow\Workflow\Decision;
 use Bravo3\Workflow\Workflow\WorkflowHistory;
 use Guzzle\Service\Resource\Model;
 use Symfony\Component\Yaml\Yaml;
@@ -67,8 +68,25 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
                 'Found decision task for "'.$event->getWorkflowName()."'",
                 $this->createEventContext($event)
             );
+
+            // Dispatching an event here will let any number of deciders schedule tasks or modify the workflow result
             $this->dispatch(Event::TASK_DECISION_READY, $event);
+
+            // This will return the decision result to SWF, while also firing notification events on each decision
+            $this->processDecision($event->getDecision());
         }
+    }
+
+    /**
+     * Process a workflow decision
+     *
+     * @param Decision $decision
+     */
+    public function processDecision(Decision $decision)
+    {
+        // TODO: complete me
+
+        // TODO: don't forget to dispatch decision events!
     }
 
     /**
