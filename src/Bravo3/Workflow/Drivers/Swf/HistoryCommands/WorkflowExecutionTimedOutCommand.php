@@ -8,6 +8,6 @@ class WorkflowExecutionTimedOutCommand extends AbstractHistoryCommand
     public function apply(WorkflowHistory $history)
     {
         $history->setTimeEnded($this->timestamp);
-        $history->failWorkflow('Timeout: '.$this->getAttribute('timeoutType'));
+        $history->setWorkflowFailed('Timeout: '.$this->getAttribute('timeoutType'));
     }
 }

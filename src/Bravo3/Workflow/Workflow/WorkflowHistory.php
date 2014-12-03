@@ -37,6 +37,11 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * @var bool
      */
+    protected $activity_error = false;
+
+    /**
+     * @var bool
+     */
     protected $fatal_error = false;
 
     /**
@@ -158,6 +163,28 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
+     * Check if an activity has failed
+     *
+     * @return boolean
+     */
+    public function hasActivityFailure()
+    {
+        return $this->activity_error;
+    }
+
+    /**
+     * Mark the workflow as having a failed activity
+     *
+     * @param boolean $activity_error
+     * @return $this
+     */
+    public function setActivityFailed()
+    {
+        $this->activity_error = true;
+        return $this;
+    }
+
+    /**
      * Get the error messages relating to the workflows failed state
      *
      * @return string[]
@@ -172,7 +199,7 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
      *
      * @param string $message
      */
-    public function failWorkflow($message)
+    public function setWorkflowFailed($message)
     {
         $this->fatal_error      = true;
         $this->error_messages[] = $message;

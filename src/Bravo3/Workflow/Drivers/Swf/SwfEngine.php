@@ -5,7 +5,6 @@ use Aws\Common\Aws;
 use Aws\Swf\SwfClient;
 use Bravo3\Workflow\Drivers\AbstractEngine;
 use Bravo3\Workflow\Events\WorkflowEvent;
-use Bravo3\Workflow\Exceptions\InsufficientDataException;
 use Guzzle\Service\Resource\Model;
 
 abstract class SwfEngine extends AbstractEngine
@@ -18,12 +17,6 @@ abstract class SwfEngine extends AbstractEngine
     protected $swf;
 
     /**
-     * @var array
-     */
-    protected $swf_config;
-
-
-    /**
      * Create an SWF engine
      *
      * $swf_config contains:
@@ -34,33 +27,11 @@ abstract class SwfEngine extends AbstractEngine
      * @param array $aws_config AWS connection parameters
      * @param array $swf_config SWF parameters
      */
-    public function __construct(array $aws_config, array $swf_config)
+    public function __construct(array $aws_config)
     {
         parent::__construct();
         $aws              = Aws::factory($aws_config);
         $this->swf        = $aws->get('swf');
-        $this->swf_config = $swf_config;
-    }
-
-    /**
-     * Get an SWF parameter
-     *
-     * @param string $key
-     * @param mixed  $default
-     * @param bool   $mandatory
-     * @return mixed
-     */
-    protected function getConfig($key, $default = null, $mandatory = false)
-    {
-        if (!array_key_exists($key, $this->swf_config)) {
-            if ($mandatory) {
-                throw new InsufficientDataException("Required SWF parameter '".$key."' is missing");
-            }
-
-            return $default;
-        }
-
-        return $this->swf_config[$key];
     }
 
     /**

@@ -10,8 +10,9 @@ class ScheduleActivityTaskFailedCommand extends AbstractHistoryCommand
     public function apply(WorkflowHistory $history)
     {
         $activity = $this->getAttribute(['activityType', 'name']).'-'.$this->getAttribute(['activityType', 'version']);
-        $cause = $this->getAttribute('cause');
+        $cause    = $this->getAttribute('cause');
 
-        $history->failWorkflow('Unable to schedule activity task: '.$activity.' ('.$cause.')');
+        $history->setActivityFailed();
+        $history->setWorkflowFailed('Unable to schedule activity task: '.$activity.' ('.$cause.')');
     }
 }

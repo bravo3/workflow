@@ -68,9 +68,9 @@ class WorkflowHistoryItem
      */
     protected $error_message = null;
 
-    public function __construct($activity_id = null)
+    public function __construct($event_id = null)
     {
-        $this->event_id = $activity_id;
+        $this->event_id = $event_id;
     }
 
     /**

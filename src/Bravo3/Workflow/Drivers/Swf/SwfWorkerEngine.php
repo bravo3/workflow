@@ -14,15 +14,19 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
      * @param string $task_list
      * @return void
      */
-    public function checkForTask($task_list)
+    public function checkForTask($task_list = null)
     {
+        if (!$task_list) {
+            $task_list = $this->getWorkflow()->getTasklist();
+        }
+
         $task = $this->swf->pollForActivityTask(
             [
-                'domain'   => $this->getConfig('domain', null, true),
+                'domain'   => $this->getWorkflow()->getDomain(),
                 'taskList' => [
                     'name' => $task_list,
                 ],
-                'identity' => $this->getConfig('identity', static::DEFAULT_IDENTITY, false),
+                'identity' => $this->getIdentity(),
             ]
         );
 

@@ -8,6 +8,6 @@ class WorkflowExecutionCanceledCommand extends AbstractHistoryCommand
     public function apply(WorkflowHistory $history)
     {
         $history->setTimeEnded($this->timestamp);
-        $history->failWorkflow('Cancelled: '.$this->getAttribute('details'));
+        $history->setWorkflowFailed('Cancelled: '.$this->getAttribute('details'));
     }
 }

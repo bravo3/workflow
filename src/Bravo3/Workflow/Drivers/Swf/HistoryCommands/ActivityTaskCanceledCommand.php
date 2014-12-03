@@ -11,7 +11,7 @@ class ActivityTaskCanceledCommand extends AbstractHistoryCommand
     {
         $item = $this->getHistoryItem($history, $this->getAttribute('scheduledEventId'));
         $item->setTimeEnded($this->timestamp);
-        $item->setState(HistoryItemState::FAILED());
+        $item->setState(HistoryItemState::CANCELLED());
         $item->setErrorMessage('Cancelled: '.$this->getAttribute('details'));
     }
 }

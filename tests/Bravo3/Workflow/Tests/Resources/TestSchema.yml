@@ -1,13 +1,11 @@
 workflow:
     start_to_close_timeout: 60
-    domain: test
+    domain: workflow_jordon
     tasklist: test
 
 tasks:
     -:
         requires:
-            activity:
-                test-activity: 0
         class: Bravo3\Workflow\Tests\Resources\Activities\AlphaActivity
         input: alpha
         control: alpha
@@ -39,6 +37,19 @@ tasks:
         class: Bravo3\Workflow\Tests\Resources\Activities\CharlieActivity
         input: charlie
         control: charlie
+        activity_name: test-activity
+        activity_version: 1
+        schedule_to_start_timeout: 5
+        schedule_to_close_timeout: 15
+        start_to_close_timeout: 10
+        heartbeat_timeout: 10
+    -:
+        requires:
+            variable:
+                foo: bar
+        class: Bravo3\Workflow\Tests\Resources\Activities\OmegaActivity
+        input: should-never-get-run
+        control: should-never-get-run
         activity_name: test-activity
         activity_version: 1
         schedule_to_start_timeout: 5

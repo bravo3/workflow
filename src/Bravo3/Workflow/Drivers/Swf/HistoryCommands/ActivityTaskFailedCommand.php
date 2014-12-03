@@ -18,5 +18,6 @@ class ActivityTaskFailedCommand extends AbstractHistoryCommand
         $item->setTimeEnded($this->timestamp);
         $item->setState(HistoryItemState::FAILED());
         $item->setErrorMessage('Failed: '.$reason);
+        $history->setActivityFailed();
     }
 }

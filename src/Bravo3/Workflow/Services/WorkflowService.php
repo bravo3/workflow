@@ -1,17 +1,13 @@
 <?php
 namespace Bravo3\Workflow\Services;
 
-use Bravo3\Workflow\Workflow\YamlWorkflow;
+use Bravo3\Workflow\Memory\MemoryPoolAwareInterface;
+use Bravo3\Workflow\Memory\MemoryPoolAwareTrait;
+use Bravo3\Workflow\Workflow\WorkflowAwareInterface;
+use Bravo3\Workflow\Workflow\WorkflowAwareTrait;
 
-class WorkflowService
+class WorkflowService implements WorkflowAwareInterface, MemoryPoolAwareInterface
 {
-    /**
-     * @var YamlWorkflow
-     */
-    protected $workflow;
-
-    public function __construct(YamlWorkflow $workflow)
-    {
-        $this->workflow = $workflow;
-    }
+    use WorkflowAwareTrait;
+    use MemoryPoolAwareTrait;
 }

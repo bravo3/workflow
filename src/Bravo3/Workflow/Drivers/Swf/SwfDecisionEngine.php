@@ -17,9 +17,9 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
      */
     protected $command_map;
 
-    public function __construct(array $aws_config, array $swf_config)
+    public function __construct(array $aws_config)
     {
-        parent::__construct($aws_config, $swf_config);
+        parent::__construct($aws_config);
         $this->command_map = Yaml::parse(__DIR__.'/HistoryCommands/CommandMap.yml');
     }
 
@@ -29,19 +29,23 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
      * @param string $task_list
      * @return void
      */
-    public function checkForTask($task_list)
+    public function checkForTask($task_list = null)
     {
+        if (!$task_list) {
+            $task_list = $this->getWorkflow()->getTasklist();
+        }
+
         /** @var DecisionEvent */
         $event = null;
         $token = null;
         do {
             // SWF params
             $args = [
-                'domain'   => $this->getConfig('domain', null, true),
+                'domain'   => $this->getWorkflow()->getDomain(),
                 'taskList' => [
                     'name' => $task_list,
                 ],
-                'identity' => $this->getConfig('identity', static::DEFAULT_IDENTITY, false),
+                'identity' => $this->getIdentity(),
             ];
 
             if ($token) {
@@ -78,7 +82,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
     }
 
     /**
-     * Process a workflow decision
+     * Process a workflow decision, sending the result back to the workflow engine
      *
      * @param Decision $decision
      */

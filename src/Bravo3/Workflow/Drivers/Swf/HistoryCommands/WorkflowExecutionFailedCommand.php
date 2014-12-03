@@ -13,6 +13,6 @@ class WorkflowExecutionFailedCommand extends AbstractHistoryCommand
         }
 
         $history->setTimeEnded($this->timestamp);
-        $history->failWorkflow('Failed: '.$reason);
+        $history->setWorkflowFailed('Failed: '.$reason);
     }
 }

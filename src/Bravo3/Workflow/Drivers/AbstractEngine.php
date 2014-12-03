@@ -6,12 +6,16 @@ use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Events\WorkflowEvent;
 use Bravo3\Workflow\Flags\FlagInterface;
 use Bravo3\Workflow\Flags\SimpleFlag;
+use Bravo3\Workflow\Workflow\WorkflowAwareTrait;
+use Bravo3\Workflow\Workflow\WorkflowInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class AbstractEngine extends EventDispatcher
 {
+    use WorkflowAwareTrait;
+
     /**
      * @var FlagInterface
      */
@@ -21,6 +25,16 @@ abstract class AbstractEngine extends EventDispatcher
      * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var WorkflowInterface
+     */
+    protected $workflow;
+
+    /**
+     * @var string
+     */
+    protected $identity = 'Workflow Engine';
 
     public function __construct()
     {
@@ -63,13 +77,34 @@ abstract class AbstractEngine extends EventDispatcher
     }
 
     /**
+     * Get Identity
+     *
+     * @return string
+     */
+    public function getIdentity()
+    {
+        return $this->identity;
+    }
+
+    /**
+     * Set Identity
+     *
+     * @param string $identity
+     * @return void
+     */
+    public function setIdentity($identity)
+    {
+        $this->identity = $identity;
+    }
+
+    /**
      * Enter a loop, endlessly checking for a decision
      *
-     * @param string        $task_list
+     * @param string        $task_list  Optionally override the workflows default tasklist
      * @param FlagInterface $abort_flag A flag used to break the daemon execution
      * @return void
      */
-    public function daemonise($task_list, FlagInterface $abort_flag = null)
+    public function daemonise($task_list = null, FlagInterface $abort_flag = null)
     {
         $this->setAbortFlag($abort_flag);
 
@@ -87,7 +122,7 @@ abstract class AbstractEngine extends EventDispatcher
         } while (true);
     }
 
-    abstract public function checkForTask($task_list);
+    abstract public function checkForTask($task_list = null);
 
     /**
      * Create a context for logging, containing event details
