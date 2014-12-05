@@ -66,7 +66,7 @@ class YamlWorkflow implements WorkflowInterface
         foreach ($schemas as $task_name => $schema) {
             $tasks[] = TaskSchema::fromArray($schema);
         }
-        
+
         return $tasks;
     }
 

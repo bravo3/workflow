@@ -28,6 +28,7 @@ class Scheduler
     {
         $this->history           = $history;
         $this->memory_pool       = $memory_pool;
+
         $this->history_inspector = new HistoryInspector($history);
     }
 

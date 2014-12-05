@@ -53,7 +53,8 @@ class HistoryInspector
         foreach ($this->history as $history_item) {
             /** @var WorkflowHistoryItem $history_item */
             if ($task->getActivityName() == $history_item->getActivityName() &&
-                $task->getActivityVersion() == $history_item->getActivityVersion()
+                $task->getActivityVersion() == $history_item->getActivityVersion() &&
+                $task->getControl() == $history_item->getControl()
             ) {
                 return true;
             }

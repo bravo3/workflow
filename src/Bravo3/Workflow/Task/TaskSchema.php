@@ -64,7 +64,7 @@ class TaskSchema
      * @param array $schema
      * @return TaskSchema
      */
-    public static function fromArray(array $schema)
+    public static function fromArray(array $arr)
     {
         $vars = [
             'activity_name'             => null,
@@ -83,7 +83,16 @@ class TaskSchema
 
         foreach ($vars as $key => $default) {
             $fn    = self::snakeToCamel('set_'.$key);
-            $value = array_key_exists($key, $schema) ? $schema[$key] : $default;
+            $value = array_key_exists($key, $arr) ? $arr[$key] : $default;
+
+            if (is_array($default) && !is_array($value)) {
+                if ($value === null) {
+                    $value = [];
+                } else {
+                    $value = [$value];
+                }
+            }
+
             $schema->$fn($value);
         }
 

@@ -4,7 +4,7 @@ workflow:
     tasklist: test
 
 tasks:
-    -:
+    -
         requires:
         class: Bravo3\Workflow\Tests\Resources\Activities\AlphaActivity
         input: alpha
@@ -15,7 +15,7 @@ tasks:
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -:
+    -
         requires:
             activity:
                 test-activity: 1
@@ -28,7 +28,7 @@ tasks:
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -:
+    -
         requires:
             activity:
                 test-activity: 2
@@ -43,7 +43,7 @@ tasks:
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -:
+    -
         requires:
             variable:
                 foo: bar
