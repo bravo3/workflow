@@ -3,6 +3,7 @@ namespace Bravo3\Workflow\Services;
 
 use Bravo3\Workflow\Enum\WorkflowResult;
 use Bravo3\Workflow\Events\DecisionEvent;
+use Bravo3\Workflow\Memory\JailedMemoryPool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -59,8 +60,13 @@ class Decider extends WorkflowService implements EventSubscriberInterface
             return;
         }
 
+        // Create a memory pool jailed to this execution
+        $memory_pool = $this->getWorkflow()->getJailMemoryPool() ?
+            JailedMemoryPool::jail($this->getMemoryPool(), $event->getExecutionId()) :
+            $this->getMemoryPool();
+
         // Check if we need to schedule
-        $scheduler = new Scheduler($history, $this->getMemoryPool());
+        $scheduler = new Scheduler($history, $memory_pool);
         foreach ($tasks as $task) {
             if ($scheduler->canScheduleTask($task)) {
                 $decision->scheduledTask($task);

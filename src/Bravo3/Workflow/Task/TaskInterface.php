@@ -13,32 +13,4 @@ interface TaskInterface
      * @return void
      */
     public function execute();
-
-    /**
-     * Code to be executed by the DECIDER before scheduling the task
-     *
-     * @return void
-     */
-    public function pre();
-
-    /**
-     * Code executed by the DECIDER on workflow success
-     *
-     * @return void
-     */
-    public function succeed();
-
-    /**
-     * Code executed by the DECIDER on workflow failure
-     *
-     * @return void
-     */
-    public function failed();
-
-    /**
-     * Code executed by the DECIDER when a workflow task completes, regardless of success
-     *
-     * @return void
-     */
-    public function done();
 }

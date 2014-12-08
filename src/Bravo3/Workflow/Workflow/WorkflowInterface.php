@@ -32,4 +32,12 @@ interface WorkflowInterface
      * @return int
      */
     public function getStartToCloseTimeout();
+
+    /**
+     * True if the memory pool should be jailed to the current execution, if false, all executions share the same
+     * memory pool namespace
+     *
+     * @return bool
+     */
+    public function getJailMemoryPool();
 }

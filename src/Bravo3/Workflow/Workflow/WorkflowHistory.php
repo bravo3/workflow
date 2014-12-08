@@ -1,6 +1,7 @@
 <?php
 namespace Bravo3\Workflow\Workflow;
 
+use Bravo3\Workflow\Enum\HistoryItemState;
 use Bravo3\Workflow\Exceptions\OutOfBoundsException;
 use Bravo3\Workflow\Exceptions\UnexpectedValueException;
 
@@ -52,13 +53,33 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Add a history item
      *
+     * Adding an item in a failed state will flag the workflow as having a failed activity. If you modify the item post
+     * being added, you should set the fail flag manually.
+     *
      * @param WorkflowHistoryItem $item
      * @return $this
      */
     public function add(WorkflowHistoryItem $item)
     {
         $this->history[$item->getEventId()] = $item;
+        $this->flagActivityFailure($item);
         return $this;
+    }
+
+    /**
+     * If the passed item is in a failed state, automatically flag this workflow as having a failed activity
+     *
+     * @param WorkflowHistoryItem $item
+     */
+    protected function flagActivityFailure(WorkflowHistoryItem $item)
+    {
+        switch ($item->getState()) {
+            case HistoryItemState::FAILED():
+            case HistoryItemState::TIMED_OUT():
+                $this->setActivityFailed();
+            default:
+                return;
+        }
     }
 
     /**

@@ -88,4 +88,42 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(WorkflowResult::COMPLETE(), $event4->getDecision()->getWorkflowResult());
     }
 
+    public function testActivityFail()
+    {
+        Conf::init(__DIR__.'/../../../../config/');
+
+        $memory_pool = new RedisMemoryPool('decider-tests', 60, Conf::get('redis'));
+
+        $decider = new Decider();
+        $decider->setWorkflow(new YamlWorkflow(__DIR__.'/../Resources/TestSchema.yml'));
+        $decider->setMemoryPool($memory_pool);
+
+        // Workflow started -
+        $event1 = new DecisionEvent();
+        $decider->processDecisionEvent($event1);
+
+        $this->assertCount(1, $event1->getDecision()->getScheduledTasks());
+        $this->assertEquals(WorkflowResult::COMMAND(), $event1->getDecision()->getWorkflowResult());
+        $task = $event1->getDecision()->getScheduledTasks()[0];
+        $this->assertEquals('alpha', $task->getControl());
+
+        // Task 1 failed -
+        $alpha = new WorkflowHistoryItem('1');
+        $alpha->setActivityName('test-activity')->setActivityVersion('1');
+        $alpha->setTimeScheduled(new \DateTime('2014-10-10 10:01:00'));
+        $alpha->setTimeStarted(new \DateTime('2014-10-10 10:00:00'));
+        $alpha->setTimeEnded(new \DateTime('2014-10-10 10:04:00'));
+        $alpha->setState(HistoryItemState::FAILED());
+        $alpha->setErrorMessage('Test failure');
+        $alpha->setControl('alpha')->setInput('alpha')->setResult(">.<");
+
+        $event2 = new DecisionEvent();
+        $event2->getHistory()->add($alpha);
+
+        $decider->processDecisionEvent($event2);
+
+        $this->assertCount(0, $event2->getDecision()->getScheduledTasks());
+        $this->assertEquals(WorkflowResult::FAIL(), $event2->getDecision()->getWorkflowResult());
+    }
+
 }

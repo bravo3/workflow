@@ -99,4 +99,15 @@ class YamlWorkflow implements WorkflowInterface
     {
         return $this->getSchemaProperty('workflow.start_to_close_timeout');
     }
+
+    /**
+     * True if the memory pool should be jailed to the current execution, if false, all executions share the same
+     * memory pool namespace
+     *
+     * @return bool
+     */
+    public function getJailMemoryPool()
+    {
+        return $this->getSchemaProperty('workflow.jail_memory_pool', true);
+    }
 }
