@@ -6,7 +6,7 @@ use Bravo3\Workflow\Workflow\WorkflowAwareInterface;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-interface EngineInterface extends EventDispatcherInterface, LoggerAwareInterface, WorkflowAwareInterface
+interface ActivityInterface extends EventDispatcherInterface, LoggerAwareInterface, WorkflowAwareInterface
 {
     /**
      * Get the abort flag used to break daemon execution

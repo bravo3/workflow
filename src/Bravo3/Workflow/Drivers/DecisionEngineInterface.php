@@ -3,7 +3,7 @@ namespace Bravo3\Workflow\Drivers;
 
 use Bravo3\Workflow\Workflow\Decision;
 
-interface DecisionEngineInterface extends EngineInterface
+interface DecisionEngineInterface extends ActivityInterface
 {
     /**
      * Process a workflow decision

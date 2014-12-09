@@ -2,6 +2,7 @@
 <?php
 use Bravo3\Properties\Conf;
 use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
+use Bravo3\Workflow\Drivers\Swf\SwfWorkflowEngine;
 use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
@@ -26,6 +27,10 @@ $pool = new RedisMemoryPool('test', 600, $conf['redis']);
 $logger->debug('Creating YAML based workflow..');
 $wf = new YamlWorkflow(__DIR__.'/Bravo3/Workflow/Tests/Resources/TestSchema.yml');
 
+$logger->debug('Creating SWF workflow engine..');
+$workflow_engine = new SwfWorkflowEngine($conf['aws']);
+$workflow_engine->setWorkflow($wf);
+
 $logger->debug('Creating SWF decision engine..');
 $decision_engine = new SwfDecisionEngine($conf['aws']);
 $decision_engine->setWorkflow($wf);
@@ -38,6 +43,11 @@ $decider->setMemoryPool($pool);
 $logger->debug('Subscribing..');
 $decision_engine->addSubscriber($decider);
 $decision_engine->addListener(Event::DAEMON_POLLING, $onPoll);
+
+$logger->debug('Creating new workflow..');
+$wf = $workflow_engine->createWorkflow('test-'.time());
+$logger->info(" > Execution: ".$wf->getExecutionId());
+$logger->info(" > Run ID:    ".$wf->getRunId());
 
 $logger->debug('Starting daemon..');
 $decision_engine->daemonise('test-decision');

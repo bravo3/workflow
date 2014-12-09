@@ -2,6 +2,8 @@ workflow:
     start_to_close_timeout: 60
     domain: workflow_jordon
     tasklist: test
+    workflow_name: test
+    workflow_version: 1
     jail_memory_pool: true
 
 tasks:

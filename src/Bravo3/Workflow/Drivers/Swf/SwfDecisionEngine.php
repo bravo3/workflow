@@ -3,8 +3,14 @@ namespace Bravo3\Workflow\Drivers\Swf;
 
 use Bravo3\Workflow\Drivers\DecisionEngineInterface;
 use Bravo3\Workflow\Drivers\Swf\HistoryCommands\HistoryCommandInterface;
+use Bravo3\Workflow\Drivers\Swf\WorkflowCommands\WorkflowCommandInterface;
 use Bravo3\Workflow\Enum\Event;
+use Bravo3\Workflow\Enum\WorkflowResult;
+use Bravo3\Workflow\Events\CompletingWorkflowEvent;
 use Bravo3\Workflow\Events\DecisionEvent;
+use Bravo3\Workflow\Events\FailingWorkflowEvent;
+use Bravo3\Workflow\Events\SchedulingTaskEvent;
+use Bravo3\Workflow\Exceptions\UnexpectedValueException;
 use Bravo3\Workflow\Workflow\Decision;
 use Bravo3\Workflow\Workflow\WorkflowHistory;
 use Guzzle\Service\Resource\Model;
@@ -88,9 +94,55 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
      */
     public function processDecision(Decision $decision)
     {
-        // TODO: complete me
+        switch ($decision->getWorkflowResult()) {
+            // Complete a workflow
+            case WorkflowResult::COMPLETE():
+                $this->dispatch(Event::DECISION_COMPLETE, new CompletingWorkflowEvent($this->getWorkflow()));
+                $class = 'RespondDecisionCompleteCommand';
+                break;
 
-        // TODO: don't forget to dispatch decision events!
+            // Fail a workflow
+            case WorkflowResult::FAIL():
+                $this->dispatch(Event::DECISION_FAIL, new FailingWorkflowEvent($this->getWorkflow()));
+                $class = 'RespondDecisionFailedCommand';
+                break;
+
+            // Send workflow commands
+            case WorkflowResult::COMMAND():
+                foreach ($decision->getScheduledTasks() as $task) {
+                    $this->dispatch(Event::DECISION_SCHEDULE, new SchedulingTaskEvent($task));
+                }
+                $class = 'RespondDecisionScheduleCommand';
+                break;
+
+            // Unsupported response
+            default:
+                throw new UnexpectedValueException("Unknown workflow result: ".$decision->getWorkflowResult()->key());
+        }
+
+        $this->runCommand($class, ['decision' => $decision]);
+    }
+
+    /**
+     * Create (and run) a workflow command
+     *
+     * @param string $class Workflow command short class name
+     * @param array  $args  Command arguments
+     * @param bool   $exec  Run the command after construction, if false the command will just be returned
+     * @return WorkflowCommandInterface
+     */
+    private function runCommand($class, array $args, $exec = true)
+    {
+        $class = 'Bravo3\Workflow\Drivers\Swf\WorkflowCommands\\'.$class;
+
+        /** @var WorkflowCommandInterface $cmd */
+        $cmd = new $class($this->swf, $this->getWorkflow(), $args);
+
+        if ($exec) {
+            $cmd->execute();
+        }
+
+        return $cmd;
     }
 
     /**
@@ -99,7 +151,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
      * @param DecisionEvent $event
      * @param Model         $model
      */
-    protected function addHistory(DecisionEvent $event, Model $model)
+    private function addHistory(DecisionEvent $event, Model $model)
     {
         $history = $event->getHistory();
         $items   = $model->get('events');
@@ -113,7 +165,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
      *
      * @param array $history_item
      */
-    protected function parseHistoryItem(WorkflowHistory $history, array $history_item)
+    private function parseHistoryItem(WorkflowHistory $history, array $history_item)
     {
         if (array_key_exists($history_item['eventType'], $this->command_map)) {
             $class = $this->command_map[$history_item['eventType']]['class'];

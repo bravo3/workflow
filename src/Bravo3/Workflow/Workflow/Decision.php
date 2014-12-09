@@ -21,6 +21,21 @@ class Decision
      */
     protected $decision_token;
 
+    /**
+     * @var string
+     */
+    protected $result;
+
+    /**
+     * @var string
+     */
+    protected $reason;
+
+    /**
+     * @var string
+     */
+    protected $details;
+
     public function __construct($token)
     {
         $this->decision_token = $token;
@@ -91,5 +106,71 @@ class Decision
     public function getDecisionToken()
     {
         return $this->decision_token;
+    }
+
+    /**
+     * Get Details
+     *
+     * @return string
+     */
+    public function getDetails()
+    {
+        return $this->details;
+    }
+
+    /**
+     * Set Details
+     *
+     * @param string $details
+     * @return $this
+     */
+    public function setDetails($details)
+    {
+        $this->details = $details;
+        return $this;
+    }
+
+    /**
+     * Get Reason
+     *
+     * @return string
+     */
+    public function getReason()
+    {
+        return $this->reason;
+    }
+
+    /**
+     * Set Reason
+     *
+     * @param string $reason
+     * @return $this
+     */
+    public function setReason($reason)
+    {
+        $this->reason = $reason;
+        return $this;
+    }
+
+    /**
+     * Get Result
+     *
+     * @return string
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    /**
+     * Set Result
+     *
+     * @param string $result
+     * @return $this
+     */
+    public function setResult($result)
+    {
+        $this->result = $result;
+        return $this;
     }
 }

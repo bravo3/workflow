@@ -27,6 +27,20 @@ interface WorkflowInterface
     public function getTasklist();
 
     /**
+     * Get the workflow name
+     *
+     * @return string
+     */
+    public function getWorkflowName();
+
+    /**
+     * Get the workflow version
+     *
+     * @return mixed
+     */
+    public function getWorkflowVersion();
+
+    /**
      * Start to close timeout of the entire workflow in seconds
      *
      * @return int

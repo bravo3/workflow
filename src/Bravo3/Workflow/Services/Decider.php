@@ -11,6 +11,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class Decider extends WorkflowService implements EventSubscriberInterface
 {
+    const MSG_WF_FAILED = 'Workflow failed';
+
     public static function getSubscribedEvents()
     {
         return ['decision_task' => 'processDecisionEvent'];
@@ -57,6 +59,8 @@ class Decider extends WorkflowService implements EventSubscriberInterface
         // Check if we need to fail
         if (($this->getFailOnActivityFailure() && $history->hasActivityFailure()) || $history->hasWorkflowFailed()) {
             $decision->setWorkflowResult(WorkflowResult::FAIL());
+            $decision->setReason(static::MSG_WF_FAILED);
+            $decision->setDetails(implode(", ", $history->getErrorMessages()));
             return;
         }
 

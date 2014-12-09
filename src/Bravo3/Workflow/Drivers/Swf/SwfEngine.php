@@ -9,8 +9,6 @@ use Guzzle\Service\Resource\Model;
 
 abstract class SwfEngine extends AbstractEngine
 {
-    const DEFAULT_IDENTITY = 'Bravo3 Workflow Engine';
-
     /**
      * @var SwfClient
      */
@@ -25,13 +23,12 @@ abstract class SwfEngine extends AbstractEngine
      *      'identity' => (string) Identity of the decider to pass back to SWF
      *
      * @param array $aws_config AWS connection parameters
-     * @param array $swf_config SWF parameters
      */
     public function __construct(array $aws_config)
     {
         parent::__construct();
-        $aws              = Aws::factory($aws_config);
-        $this->swf        = $aws->get('swf');
+        $aws       = Aws::factory($aws_config);
+        $this->swf = $aws->get('swf');
     }
 
     /**

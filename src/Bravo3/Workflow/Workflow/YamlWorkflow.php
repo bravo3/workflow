@@ -87,7 +87,7 @@ class YamlWorkflow implements WorkflowInterface
      */
     public function getTasklist()
     {
-        return $this->getSchemaProperty('workflow.tasklist', null, true);
+        return $this->getSchemaProperty('workflow.tasklist');
     }
 
     /**
@@ -109,5 +109,25 @@ class YamlWorkflow implements WorkflowInterface
     public function getJailMemoryPool()
     {
         return $this->getSchemaProperty('workflow.jail_memory_pool', true);
+    }
+
+    /**
+     * Get the workflow name
+     *
+     * @return string
+     */
+    public function getWorkflowName()
+    {
+        return $this->getSchemaProperty('workflow.workflow_name', null, true);
+    }
+
+    /**
+     * Get the workflow version
+     *
+     * @return string
+     */
+    public function getWorkflowVersion()
+    {
+        return $this->getSchemaProperty('workflow.workflow_version', null, true);
     }
 }

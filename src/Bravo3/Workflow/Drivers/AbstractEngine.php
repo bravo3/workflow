@@ -8,6 +8,7 @@ use Bravo3\Workflow\Flags\FlagInterface;
 use Bravo3\Workflow\Flags\SimpleFlag;
 use Bravo3\Workflow\Workflow\WorkflowAwareTrait;
 use Bravo3\Workflow\Workflow\WorkflowInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -15,16 +16,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 abstract class AbstractEngine extends EventDispatcher
 {
     use WorkflowAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * @var FlagInterface
      */
     protected $abort_flag;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * @var WorkflowInterface
@@ -39,17 +36,6 @@ abstract class AbstractEngine extends EventDispatcher
     public function __construct()
     {
         $this->logger = new NullLogger();
-    }
-
-    /**
-     * Sets a logger instance on the object
-     *
-     * @param LoggerInterface $logger
-     * @return void
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
     }
 
     /**
