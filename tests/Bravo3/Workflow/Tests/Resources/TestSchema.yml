@@ -7,54 +7,49 @@ workflow:
     jail_memory_pool: true
 
 tasks:
-    -
+    alpha/1:
         requires:
         class: Bravo3\Workflow\Tests\Resources\Activities\AlphaActivity
         input: alpha
         control: alpha
-        activity_name: test-activity
-        activity_version: 1
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -
+    bravo/1:
         requires:
             activity:
-                test-activity: 1
+                - alpha/1
         class: Bravo3\Workflow\Tests\Resources\Activities\BravoActivity
         input: bravo
         control: bravo
-        activity_name: test-activity
-        activity_version: 1
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -
+    charlie/1:
         requires:
             activity:
-                test-activity: 2
+                - bravo/1
             control:
                 bravo: 1
+            variable:
+                alpha: "1"
+                bravo: "2"
         class: Bravo3\Workflow\Tests\Resources\Activities\CharlieActivity
         input: charlie
         control: charlie
-        activity_name: test-activity
-        activity_version: 1
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
         heartbeat_timeout: 10
-    -
+    omega/1:
         requires:
             variable:
                 foo: bar
         class: Bravo3\Workflow\Tests\Resources\Activities\OmegaActivity
         input: should-never-get-run
         control: should-never-get-run
-        activity_name: test-activity
-        activity_version: 1
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10

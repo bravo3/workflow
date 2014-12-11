@@ -16,6 +16,11 @@ class WorkEvent extends WorkflowEvent
     /**
      * @var string
      */
+    protected $control;
+
+    /**
+     * @var string
+     */
     protected $activity_name;
 
     /**
@@ -108,6 +113,28 @@ class WorkEvent extends WorkflowEvent
     public function setActivityVersion($activity_version)
     {
         $this->activity_version = $activity_version;
+        return $this;
+    }
+
+    /**
+     * Get Control
+     *
+     * @return string
+     */
+    public function getControl()
+    {
+        return $this->control;
+    }
+
+    /**
+     * Set Control
+     *
+     * @param string $control
+     * @return $this
+     */
+    public function setControl($control)
+    {
+        $this->control = $control;
         return $this;
     }
 }

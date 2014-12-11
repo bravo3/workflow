@@ -26,3 +26,20 @@ This workflow engine uses key-value memory pools to store state and ephemeral wo
 responsibility of the Task classes to persist data as required.
 
 [Redis](docs/Redis.md) is an ideal memory pool.
+
+Building a Workflow
+===================
+To run a workflow you require a workflow controller, a SaaS service like Amazon SWF that is your workflow engine
+controlling which activities need to be executed, and querying decision by talking to this decision interface.
+
+In the workflow controller, you will need to define a domain, a simple name that defines your workflow environment -
+you may with to use a different domain for testing and production. Inside that domain, you need to define a workflow
+execution. This contains a default tasklist, this tasklist is your "decision tasklist", and must be defined in your
+workflow schema.
+
+Defining Tasks
+--------------
+In your workflow controller you must also define activities as steps in a workflow execution. An activity requires an 
+`activity name` and an `activity version`. You can assign default timeout values at the SWF (or equiv provider), 
+although you may also override these at the schema level.
+

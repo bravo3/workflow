@@ -21,14 +21,16 @@ class HistoryInspectorTest extends \PHPUnit_Framework_TestCase
 
         $inspector = new HistoryInspector($history);
 
-        $this->assertEquals(0, $inspector->countActivityName('test-activity', HistoryItemState::RUNNING()));
-        $this->assertEquals(0, $inspector->countActivityName('test-activity', HistoryItemState::FAILED()));
-        $this->assertEquals(3, $inspector->countActivityName('test-activity', HistoryItemState::COMPLETED()));
-        $this->assertEquals(1, $inspector->countActivityName('test-activity', HistoryItemState::SCHEDULED()));
-        $this->assertEquals(1, $inspector->countActivityName('other-activity', HistoryItemState::COMPLETED()));
-        $this->assertEquals(1, $inspector->countActivityName('other-activity', HistoryItemState::RUNNING()));
-        $this->assertEquals(0, $inspector->countActivityName('other-activity', HistoryItemState::SCHEDULED()));
-        $this->assertEquals(0, $inspector->countActivityName('other-activity', HistoryItemState::FAILED()));
+        $schema_test  = TaskSchema::fromKey('test-activity/1');
+        $schema_other = TaskSchema::fromKey('other-activity/1');
+        $this->assertEquals(0, $inspector->countTask($schema_test, HistoryItemState::RUNNING()));
+        $this->assertEquals(0, $inspector->countTask($schema_test, HistoryItemState::FAILED()));
+        $this->assertEquals(2, $inspector->countTask($schema_test, HistoryItemState::COMPLETED()));
+        $this->assertEquals(1, $inspector->countTask($schema_test, HistoryItemState::SCHEDULED()));
+        $this->assertEquals(1, $inspector->countTask($schema_other, HistoryItemState::COMPLETED()));
+        $this->assertEquals(1, $inspector->countTask($schema_other, HistoryItemState::RUNNING()));
+        $this->assertEquals(0, $inspector->countTask($schema_other, HistoryItemState::SCHEDULED()));
+        $this->assertEquals(0, $inspector->countTask($schema_other, HistoryItemState::FAILED()));
 
         $this->assertEquals(1, $inspector->countControl('alpha', HistoryItemState::COMPLETED()));
         $this->assertEquals(1, $inspector->countControl('bravo', HistoryItemState::COMPLETED()));

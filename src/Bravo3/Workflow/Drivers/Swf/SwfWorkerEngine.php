@@ -50,6 +50,7 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
         $this->hydrateWorkflowEvent($event, $model);
         $event->setActivityId($model->get('activityId'));
         $event->setInput($model->get('input'));
+        $event->setControl($model->get('control'));
         $event->setActivityName($model->get('activityType')['name']);
         $event->setActivityVersion($model->get('activityType')['version']);
 

@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * A service that handles work tasks that require execution
  */
-class Worker implements EventSubscriberInterface
+class Worker extends WorkflowService implements EventSubscriberInterface
 {
 
     /**
@@ -37,6 +37,8 @@ class Worker implements EventSubscriberInterface
 
     public function processWorkEvent(WorkEvent $event)
     {
-
+        foreach ($this->getWorkflow()->getTasks() as $task) {
+            //if ($task->getActivityName() == )
+        }
     }
 }

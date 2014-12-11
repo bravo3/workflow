@@ -1,6 +1,8 @@
 <?php
 namespace Bravo3\Workflow\Task;
 
+use Bravo3\Workflow\Exceptions\UnexpectedValueException;
+
 class TaskSchema
 {
     /**
@@ -58,17 +60,21 @@ class TaskSchema
      */
     protected $heartbeat_timeout;
 
+    public function __construct($activity_name = null, $activity_version = null)
+    {
+        $this->activity_name    = $activity_name;
+        $this->activity_version = $activity_version;
+    }
+
     /**
      * Create a task schema from an array of schema properties
      *
      * @param array $schema
      * @return TaskSchema
      */
-    public static function fromArray(array $arr)
+    public static function fromArray(array $arr, $name, $version)
     {
         $vars = [
-            'activity_name'             => null,
-            'activity_version'          => null,
             'requires'                  => [],
             'retry'                     => 0,
             'class'                     => null,
@@ -80,6 +86,8 @@ class TaskSchema
         ];
 
         $schema = new TaskSchema();
+        $schema->setActivityName($name);
+        $schema->setActivityVersion($version);
 
         foreach ($vars as $key => $default) {
             $fn    = self::snakeToCamel('set_'.$key);
@@ -97,6 +105,24 @@ class TaskSchema
         }
 
         return $schema;
+    }
+
+
+    /**
+     * Extract the name and version from a task key and return it in a new TaskSchema
+     *
+     * @param string $key
+     * @return TaskSchema
+     */
+    public static function fromKey($key)
+    {
+        $task_parts = explode('/', $key, 2);
+
+        if (count($task_parts) != 2) {
+            throw new UnexpectedValueException("Task name '".$key."' is not in the format 'task_name/version'");
+        }
+
+        return new self($task_parts[0], $task_parts[1]);
     }
 
     /**

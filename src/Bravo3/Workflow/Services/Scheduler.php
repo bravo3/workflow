@@ -86,7 +86,7 @@ class Scheduler
         $r = $requirements[$block];
 
         if (!is_array($r)) {
-            throw new UnexpectedValueException("Task requirements '".$block."' must be an array");
+            throw new UnexpectedValueException("Task requirements '".$block."' must be an array (".$r.")");
         }
 
         return $r;
@@ -100,8 +100,9 @@ class Scheduler
      */
     protected function meetsActivityRequirements(array $requirements)
     {
-        foreach ($requirements as $activity => $count) {
-            if ($this->history_inspector->countActivityName($activity, HistoryItemState::COMPLETED()) != $count) {
+        foreach ($requirements as $activity) {
+            $schema = TaskSchema::fromKey($activity);
+            if ($this->history_inspector->countTask($schema, HistoryItemState::COMPLETED()) < 1) {
                 return false;
             }
         }

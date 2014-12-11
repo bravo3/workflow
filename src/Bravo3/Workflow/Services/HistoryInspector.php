@@ -53,8 +53,7 @@ class HistoryInspector
         foreach ($this->history as $history_item) {
             /** @var WorkflowHistoryItem $history_item */
             if ($task->getActivityName() == $history_item->getActivityName() &&
-                $task->getActivityVersion() == $history_item->getActivityVersion() &&
-                $task->getControl() == $history_item->getControl()
+                $task->getActivityVersion() == $history_item->getActivityVersion()
             ) {
                 return true;
             }
@@ -119,32 +118,4 @@ class HistoryInspector
         $this->completion_cache[$cache_key] = $count;
         return $count;
     }
-
-    /**
-     * Get the count of activities with the given activity name in the given state
-     *
-     * @param string           $activity_name
-     * @param HistoryItemState $state
-     * @return int
-     */
-    public function countActivityName($activity_name, HistoryItemState $state)
-    {
-        $cache_key = 'AN:'.$activity_name.':'.$state->key();
-
-        if (array_key_exists($cache_key, $this->completion_cache)) {
-            return $this->completion_cache[$cache_key];
-        }
-
-        $count = 0;
-        foreach ($this->history as $history_item) {
-            /** @var WorkflowHistoryItem $history_item */
-            if ($history_item->getActivityName() == $activity_name && $history_item->getState() == $state) {
-                $count++;
-            }
-        }
-
-        $this->completion_cache[$cache_key] = $count;
-        return $count;
-    }
-
 }

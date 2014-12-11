@@ -66,7 +66,7 @@ class Decider extends WorkflowService implements EventSubscriberInterface
 
         // Create a memory pool jailed to this execution
         $memory_pool = $this->getWorkflow()->getJailMemoryPool() ?
-            JailedMemoryPool::jail($this->getMemoryPool(), $event->getExecutionId()) :
+            JailedMemoryPool::jail($this->getMemoryPool(), ':'.$event->getExecutionId()) :
             $this->getMemoryPool();
 
         // Check if we need to schedule

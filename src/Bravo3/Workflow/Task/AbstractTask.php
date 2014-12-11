@@ -6,7 +6,7 @@ use Bravo3\Workflow\Memory\MemoryPoolInterface;
 abstract class AbstractTask implements TaskInterface
 {
     /**
-     * @var array
+     * @var string
      */
     protected $input;
 
@@ -15,45 +15,9 @@ abstract class AbstractTask implements TaskInterface
      */
     protected $memory_pool;
 
-    public function __construct(MemoryPoolInterface $memory_pool, array $input)
+    public function __construct(MemoryPoolInterface $memory_pool, $input)
     {
         $this->memory_pool = $memory_pool;
         $this->input       = $input;
-    }
-
-    /**
-     * Code to be executed before scheduling the task
-     *
-     * @return void
-     */
-    public function pre()
-    {
-    }
-
-    /**
-     * Code executed on workflow success
-     *
-     * @return void
-     */
-    public function succeed()
-    {
-    }
-
-    /**
-     * Code executed on workflow failure
-     *
-     * @return void
-     */
-    public function failed()
-    {
-    }
-
-    /**
-     * Code executed when a workflow task completes, regardless of success
-     *
-     * @return void
-     */
-    public function done()
-    {
     }
 }

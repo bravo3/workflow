@@ -3,6 +3,7 @@ namespace Bravo3\Workflow\Workflow;
 
 use Bravo3\Workflow\Exceptions\InsufficientDataException;
 use Bravo3\Workflow\Exceptions\NotReadableException;
+use Bravo3\Workflow\Exceptions\UnexpectedValueException;
 use Bravo3\Workflow\Task\TaskSchema;
 use Symfony\Component\Yaml\Yaml;
 
@@ -61,10 +62,11 @@ class YamlWorkflow implements WorkflowInterface
     public function getTasks()
     {
         $schemas = $this->getSchemaProperty('tasks', null, true);
-        $tasks = [];
+        $tasks   = [];
 
-        foreach ($schemas as $task_name => $schema) {
-            $tasks[] = TaskSchema::fromArray($schema);
+        foreach ($schemas as $task_key => $schema) {
+            $parts   = TaskSchema::fromKey($task_key);
+            $tasks[] = TaskSchema::fromArray($schema, $parts->getActivityName(), $parts->getActivityVersion());
         }
 
         return $tasks;

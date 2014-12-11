@@ -17,7 +17,7 @@ class YamlWorkflowTest extends \PHPUnit_Framework_TestCase
 
         $alpha = $tasks[0];
         $this->assertEquals('alpha', $alpha->getControl());
-        $this->assertEquals('test-activity', $alpha->getActivityName());
+        $this->assertEquals('alpha', $alpha->getActivityName());
         $this->assertEquals('1', $alpha->getActivityVersion());
     }
 }

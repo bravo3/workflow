@@ -22,18 +22,23 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $decider->setWorkflow(new YamlWorkflow(__DIR__.'/../Resources/TestSchema.yml'));
         $decider->setMemoryPool($memory_pool);
 
+        $this->assertTrue($decider->getWorkflow()->getJailMemoryPool());
+
         // Workflow started -
         $event1 = new DecisionEvent();
+        $event1->setExecutionId('test-execution');
         $decider->processDecisionEvent($event1);
 
         $this->assertCount(1, $event1->getDecision()->getScheduledTasks());
         $this->assertEquals(WorkflowResult::COMMAND(), $event1->getDecision()->getWorkflowResult());
         $task = $event1->getDecision()->getScheduledTasks()[0];
         $this->assertEquals('alpha', $task->getControl());
+        $this->assertEquals('alpha', $task->getActivityName());
+        $this->assertEquals('1', $task->getActivityVersion());
 
         // Task 1 complete -
         $alpha = new WorkflowHistoryItem('1');
-        $alpha->setActivityName('test-activity')->setActivityVersion('1');
+        $alpha->setActivityName('alpha')->setActivityVersion('1');
         $alpha->setTimeScheduled(new \DateTime('2014-10-10 10:01:00'));
         $alpha->setTimeStarted(new \DateTime('2014-10-10 10:00:00'));
         $alpha->setTimeEnded(new \DateTime('2014-10-10 10:04:00'));
@@ -41,6 +46,7 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $alpha->setControl('alpha')->setInput('alpha')->setResult("Hello World");
 
         $event2 = new DecisionEvent();
+        $event2->setExecutionId('test-execution');
         $event2->getHistory()->add($alpha);
 
         $decider->processDecisionEvent($event2);
@@ -52,14 +58,18 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
 
         // Task 2 complete -
         $bravo = new WorkflowHistoryItem('2');
-        $bravo->setActivityName('test-activity')->setActivityVersion('1');
+        $bravo->setActivityName('bravo')->setActivityVersion('1');
         $bravo->setTimeScheduled(new \DateTime('2014-11-10 10:01:00'));
         $bravo->setTimeStarted(new \DateTime('2014-11-10 10:00:00'));
         $bravo->setTimeEnded(new \DateTime('2014-11-10 10:04:00'));
         $bravo->setState(HistoryItemState::COMPLETED());
         $bravo->setControl('bravo')->setInput('bravo')->setResult("Hello World");
 
+        $memory_pool->set(":test-execution:alpha", 1);
+        $memory_pool->set(":test-execution:bravo", 2);
+
         $event3 = new DecisionEvent();
+        $event3->setExecutionId('test-execution');
         $event3->getHistory()->add($alpha);
         $event3->getHistory()->add($bravo);
         $decider->processDecisionEvent($event3);
@@ -71,7 +81,7 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
 
         // Task 3 complete -
         $charlie = new WorkflowHistoryItem('3');
-        $charlie->setActivityName('test-activity')->setActivityVersion('1');
+        $charlie->setActivityName('charlie')->setActivityVersion('1');
         $charlie->setTimeScheduled(new \DateTime('2014-11-10 10:01:00'));
         $charlie->setTimeStarted(new \DateTime('2014-11-10 10:00:00'));
         $charlie->setTimeEnded(new \DateTime('2014-11-10 10:04:00'));
@@ -79,6 +89,7 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $charlie->setControl('charlie')->setInput('charlie')->setResult("Hello World");
 
         $event4 = new DecisionEvent();
+        $event4->setExecutionId('test-execution');
         $event4->getHistory()->add($alpha);
         $event4->getHistory()->add($bravo);
         $event4->getHistory()->add($charlie);
