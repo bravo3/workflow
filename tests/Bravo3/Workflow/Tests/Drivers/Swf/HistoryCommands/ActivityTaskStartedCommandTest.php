@@ -10,7 +10,10 @@ class ScheduleActivityTaskStartedCommandTest extends \PHPUnit_Framework_TestCase
     public function testCommand()
     {
         $timestamp = 1326670266.115;
-        $event_id  = 'test_'.rand(10000, 99999);
+        $datestamp = new \DateTime();
+        $datestamp->setTimestamp($timestamp);
+
+        $event_id = 'test_'.rand(10000, 99999);
 
         $attributes_scheduled = [
             'activityType' => ['name' => 'TestActivity', 'version' => 123],
@@ -21,8 +24,8 @@ class ScheduleActivityTaskStartedCommandTest extends \PHPUnit_Framework_TestCase
         $attributes_started = ['scheduledEventId' => $event_id];
 
         $history          = new WorkflowHistory();
-        $schedule_command = new ActivityTaskScheduledCommand($timestamp, $attributes_scheduled, $event_id);
-        $started_command  = new ActivityTaskStartedCommand($timestamp + 30, $attributes_started, $event_id.'1');
+        $schedule_command = new ActivityTaskScheduledCommand($datestamp, $attributes_scheduled, $event_id);
+        $started_command  = new ActivityTaskStartedCommand($datestamp, $attributes_started, $event_id.'1');
 
         $this->assertCount(0, $history);
         $schedule_command->apply($history);
@@ -42,7 +45,7 @@ class ScheduleActivityTaskStartedCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Hello World', $event->getInput());
         $this->assertEquals('1234', $event->getControl());
         $this->assertEquals(1326670266, (int)$event->getTimeScheduled()->format('U'));
-        $this->assertEquals(1326670266 + 30, (int)$event->getTimeStarted()->format('U'));
+        $this->assertEquals(1326670266, (int)$event->getTimeStarted()->format('U'));
         $this->assertNull($event->getTimeEnded());
         $this->assertFalse($history->hasWorkflowFailed());
     }
@@ -54,12 +57,15 @@ class ScheduleActivityTaskStartedCommandTest extends \PHPUnit_Framework_TestCase
      */
     public function testCommandError()
     {
-        $timestamp  = 1326670266.115;
+        $timestamp = 1326670266.115;
+        $datestamp = new \DateTime();
+        $datestamp->setTimestamp($timestamp);
+
         $attributes = ['scheduledEventId' => 123456];
         $event_id   = 'test_'.rand(10000, 99999);
 
         $history = new WorkflowHistory();
-        $command = new ActivityTaskStartedCommand($timestamp, $attributes, $event_id);
+        $command = new ActivityTaskStartedCommand($datestamp, $attributes, $event_id);
 
         $command->apply($history);
     }

@@ -55,6 +55,12 @@ class RespondDecisionScheduleCommand extends AbstractWorkflowCommand
                 'input'        => $task->getInput(),
             ];
 
+            if ($task->getTasklist()) {
+                $attribs['taskList'] = [
+                    'name' => $task->getTasklist(),
+                ];
+            }
+
             if ($task->getScheduleToCloseTimeout()) {
                 $attribs['scheduleToCloseTimeout'] = $task->getScheduleToCloseTimeout();
             }

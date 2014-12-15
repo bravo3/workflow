@@ -9,9 +9,10 @@ workflow:
 tasks:
     alpha/1:
         requires:
-        class: Bravo3\Workflow\Tests\Resources\Activities\AlphaActivity
+        class: Bravo3\Workflow\Tests\Resources\Tasks\AlphaTask
         input: alpha
         control: alpha
+        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
@@ -20,9 +21,10 @@ tasks:
         requires:
             activity:
                 - alpha/1
-        class: Bravo3\Workflow\Tests\Resources\Activities\BravoActivity
+        class: Bravo3\Workflow\Tests\Resources\Tasks\BravoTask
         input: bravo
         control: bravo
+        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
@@ -36,9 +38,10 @@ tasks:
             variable:
                 alpha: "1"
                 bravo: "2"
-        class: Bravo3\Workflow\Tests\Resources\Activities\CharlieActivity
+        class: Bravo3\Workflow\Tests\Resources\Tasks\CharlieTask
         input: charlie
         control: charlie
+        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
@@ -47,9 +50,10 @@ tasks:
         requires:
             variable:
                 foo: bar
-        class: Bravo3\Workflow\Tests\Resources\Activities\OmegaActivity
+        class: Bravo3\Workflow\Tests\Resources\Tasks\OmegaTask
         input: should-never-get-run
         control: should-never-get-run
+        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10

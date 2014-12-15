@@ -22,10 +22,11 @@ trait MemoryPoolAwareTrait
      * Set the memory pool
      *
      * @param MemoryPoolInterface $memory_pool
-     * @return void
+     * @return $this
      */
     public function setMemoryPool(MemoryPoolInterface $memory_pool)
     {
         $this->memory_pool = $memory_pool;
+        return $this;
     }
 }

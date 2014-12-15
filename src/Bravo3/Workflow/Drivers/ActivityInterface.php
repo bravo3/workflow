@@ -18,19 +18,17 @@ interface ActivityInterface extends EventDispatcherInterface, LoggerAwareInterfa
     /**
      * Check for a single task, firing an event if found
      *
-     * @param string $task_list Optionally override the workflows default tasklist
      * @return void
      */
-    public function checkForTask($task_list = null);
+    public function checkForTask();
 
     /**
      * Enter a loop, endlessly checking for a decision
      *
-     * @param string        $task_list  Optionally override the workflows default tasklist
      * @param FlagInterface $abort_flag A flag used to break the daemon execution
      * @return void
      */
-    public function daemonise($task_list = null, FlagInterface $abort_flag = null);
+    public function daemonise(FlagInterface $abort_flag = null);
 
     /**
      * Get the engines identity

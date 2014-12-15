@@ -1,7 +1,11 @@
 <?php
 namespace Bravo3\Workflow\Services;
 
+use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\WorkEvent;
+use Bravo3\Workflow\Memory\JailedMemoryPool;
+use Bravo3\Workflow\Task\TaskInterface;
+use Bravo3\Workflow\Task\TaskSchema;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -32,13 +36,41 @@ class Worker extends WorkflowService implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return ['work_task' => 'processWorkEvent'];
+        return [Event::TASK_WORK_READY => 'processWorkEvent'];
     }
 
     public function processWorkEvent(WorkEvent $event)
     {
         foreach ($this->getWorkflow()->getTasks() as $task) {
-            //if ($task->getActivityName() == )
+            if ($event->getActivityName() == $task->getActivityName() &&
+                $event->getActivityVersion() == $task->getActivityVersion()
+            ) {
+                $this->executeTask($task, $event);
+            }
         }
+    }
+
+    /**
+     * Execute a task
+     *
+     * @param TaskSchema $task
+     * @param WorkEvent  $event
+     */
+    protected function executeTask(TaskSchema $task, WorkEvent $event)
+    {
+        $memory_pool = $this->getWorkflow()->getJailMemoryPool() ?
+            JailedMemoryPool::jail($this->getMemoryPool(), ':'.$event->getExecutionId()) :
+            $this->getMemoryPool();
+
+        $class = $task->getClass();
+
+        /** @var TaskInterface $obj */
+        $obj = new $class($memory_pool, $event->getInput());
+
+        if (!($obj instanceof TaskInterface)) {
+            throw new \DomainException("Class for task ".$task->getActivityName()." is not a TaskInterface");
+        }
+
+        $obj->execute($event);
     }
 }

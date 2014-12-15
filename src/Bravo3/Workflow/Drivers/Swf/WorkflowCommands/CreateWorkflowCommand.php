@@ -34,8 +34,8 @@ class CreateWorkflowCommand extends AbstractWorkflowCommand
     {
         $args = [
             'domain'        => $this->workflow->getDomain(),
-            'workflow_id'   => $this->getParameter('workflow_id', null, true),
-            'workflow_type' => [
+            'workflowId'   => $this->getParameter('workflow_id', null, true),
+            'workflowType' => [
                 'name'    => $this->workflow->getWorkflowName(),
                 'version' => $this->workflow->getWorkflowVersion(),
             ],

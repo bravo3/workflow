@@ -44,6 +44,6 @@ abstract class SwfEngine extends AbstractEngine
         $event->setRunId($model->get('workflowExecution')['runId']);
         $event->setToken($model->get('taskToken'));
         $event->setWorkflowName($model->get('workflowType')['name']);
-        $event->setWorkflowVersion($model->get('workflowExecution')['workflowId']);
+        $event->setWorkflowVersion($model->get('workflowType')['version']);
     }
 }

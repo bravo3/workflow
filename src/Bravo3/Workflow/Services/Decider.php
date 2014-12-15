@@ -1,6 +1,7 @@
 <?php
 namespace Bravo3\Workflow\Services;
 
+use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Enum\WorkflowResult;
 use Bravo3\Workflow\Events\DecisionEvent;
 use Bravo3\Workflow\Memory\JailedMemoryPool;
@@ -15,7 +16,7 @@ class Decider extends WorkflowService implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return ['decision_task' => 'processDecisionEvent'];
+        return [Event::TASK_DECISION_READY => 'processDecisionEvent'];
     }
 
     /**

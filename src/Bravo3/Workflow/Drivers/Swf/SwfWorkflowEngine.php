@@ -41,20 +41,22 @@ class SwfWorkflowEngine extends EventDispatcher implements WorkflowEngineInterfa
     /**
      * Create a new workflow
      *
+     * @param string $workflow_id
      * @param string $input
-     * @param string $tasklist
      * @return WorkflowSchema
      */
-    public function createWorkflow($workflow_id, $input = null, $tasklist = null)
+    public function createWorkflow($workflow_id, $input = null)
     {
+        $this->logger->info("Creating workflow: ".$workflow_id." with input '".$input."'");
+
         $cmd = new CreateWorkflowCommand(
             $this->swf, $this->getWorkflow(), [
                 'workflow_id' => $workflow_id,
                 'input'       => $input,
-                'tasklist'    => $input,
+                'tasklist'    => $this->getWorkflow()->getTasklist(),
             ]
         );
-        $cmd->execute();
+        return $cmd->execute();
     }
 
     /**
@@ -65,6 +67,9 @@ class SwfWorkflowEngine extends EventDispatcher implements WorkflowEngineInterfa
      */
     public function terminateWorkflow(WorkflowSchema $workflow)
     {
+        $this->logger->info("Terminating workflow: ".$workflow->getExecutionId()."/".$workflow->getRunId());
+
         // TODO: Implement terminateWorkflow() method.
+        $this->logger->warning("(not implemented)");
     }
 }

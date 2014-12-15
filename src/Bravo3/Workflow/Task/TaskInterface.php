@@ -1,6 +1,7 @@
 <?php
 namespace Bravo3\Workflow\Task;
 
+use Bravo3\Workflow\Events\WorkEvent;
 use Bravo3\Workflow\Memory\MemoryPoolInterface;
 
 interface TaskInterface
@@ -10,7 +11,8 @@ interface TaskInterface
     /**
      * Code to be executed by the WORKER when the task is run
      *
+     * @param WorkEvent $event
      * @return void
      */
-    public function execute();
+    public function execute(WorkEvent $event);
 }

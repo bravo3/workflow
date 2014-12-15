@@ -86,11 +86,10 @@ abstract class AbstractEngine extends EventDispatcher
     /**
      * Enter a loop, endlessly checking for a decision
      *
-     * @param string        $task_list  Optionally override the workflows default tasklist
      * @param FlagInterface $abort_flag A flag used to break the daemon execution
      * @return void
      */
-    public function daemonise($task_list = null, FlagInterface $abort_flag = null)
+    public function daemonise(FlagInterface $abort_flag = null)
     {
         $this->setAbortFlag($abort_flag);
 
@@ -104,11 +103,11 @@ abstract class AbstractEngine extends EventDispatcher
             }
 
             // Poll for a task
-            $this->checkForTask($task_list);
+            $this->checkForTask();
         } while (true);
     }
 
-    abstract public function checkForTask($task_list = null);
+    abstract public function checkForTask();
 
     /**
      * Create a context for logging, containing event details
@@ -119,12 +118,9 @@ abstract class AbstractEngine extends EventDispatcher
     protected function createEventContext(WorkflowEvent $event)
     {
         return [
-            'workflow_name'    => $event->getWorkflowName(),
-            'workflow_version' => $event->getWorkflowVersion(),
-            'event_id'         => $event->getEventId(),
             'execution_id'     => $event->getExecutionId(),
             'run_id'           => $event->getRunId(),
-            'token'            => $event->getToken(),
+            'event_id'         => $event->getEventId(),
         ];
     }
 }

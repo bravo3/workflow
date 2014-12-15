@@ -16,7 +16,7 @@ class WorkEvent extends WorkflowEvent
     /**
      * @var string
      */
-    protected $control;
+    protected $result;
 
     /**
      * @var string
@@ -117,24 +117,24 @@ class WorkEvent extends WorkflowEvent
     }
 
     /**
-     * Get Control
+     * Get task result
      *
      * @return string
      */
-    public function getControl()
+    public function getResult()
     {
-        return $this->control;
+        return $this->result;
     }
 
     /**
-     * Set Control
+     * Set task result
      *
-     * @param string $control
+     * @param string $result
      * @return $this
      */
-    public function setControl($control)
+    public function setResult($result)
     {
-        $this->control = $control;
+        $this->result = $result;
         return $this;
     }
 }

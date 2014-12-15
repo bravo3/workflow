@@ -41,6 +41,11 @@ class TaskSchema
     protected $control;
 
     /**
+     * @var string
+     */
+    protected $tasklist;
+
+    /**
      * @var int
      */
     protected $schedule_to_start_timeout;
@@ -69,7 +74,9 @@ class TaskSchema
     /**
      * Create a task schema from an array of schema properties
      *
-     * @param array $schema
+     * @param array  $arr
+     * @param string $name
+     * @param string $version
      * @return TaskSchema
      */
     public static function fromArray(array $arr, $name, $version)
@@ -79,7 +86,9 @@ class TaskSchema
             'retry'                     => 0,
             'class'                     => null,
             'input'                     => null,
+            'tasklist'                  => null,
             'control'                   => null,
+            'schedule_to_close_timeout' => null,
             'schedule_to_start_timeout' => null,
             'start_to_close_timeout'    => null,
             'heartbeat_timeout'         => null,
@@ -380,6 +389,28 @@ class TaskSchema
     public function setStartToCloseTimeout($start_to_close_timeout)
     {
         $this->start_to_close_timeout = $start_to_close_timeout;
+        return $this;
+    }
+
+    /**
+     * Get Tasklist
+     *
+     * @return string
+     */
+    public function getTasklist()
+    {
+        return $this->tasklist;
+    }
+
+    /**
+     * Set Tasklist
+     *
+     * @param string $tasklist
+     * @return $this
+     */
+    public function setTasklist($tasklist)
+    {
+        $this->tasklist = $tasklist;
         return $this;
     }
 }

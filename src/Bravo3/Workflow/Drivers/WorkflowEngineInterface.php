@@ -13,10 +13,9 @@ interface WorkflowEngineInterface extends EventDispatcherInterface, LoggerAwareI
      *
      * @param string $workflow_id Name of the workflow
      * @param string $input       Optional input to pass to the workflow
-     * @param string $tasklist    Optionally override the tasklist ID
      * @return WorkflowSchema
      */
-    public function createWorkflow($workflow_id, $input = null, $tasklist = null);
+    public function createWorkflow($workflow_id, $input = null);
 
     /**
      * Terminate a workflow

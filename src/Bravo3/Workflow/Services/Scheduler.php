@@ -111,7 +111,7 @@ class Scheduler
     }
 
     /**
-     * Check if we meet all control requirements
+     * Check if we meet all result requirements
      *
      * @param array $requirements
      * @return bool

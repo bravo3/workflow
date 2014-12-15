@@ -9,11 +9,14 @@ class ScheduleActivityTaskFailedCommandTest extends \PHPUnit_Framework_TestCase
     public function testCommand()
     {
         $timestamp = 1326670266.115;
+        $datestamp = new \DateTime();
+        $datestamp->setTimestamp($timestamp);
+
         $attributes = ['activityType' => ['name' => 'TestActivity', 'version' => 123], 'cause' => 'Gremlins'];
         $event_id = 'test_'.rand(10000, 99999);
 
         $history = new WorkflowHistory();
-        $command = new ScheduleActivityTaskFailedCommand($timestamp, $attributes, $event_id);
+        $command = new ScheduleActivityTaskFailedCommand($datestamp, $attributes, $event_id);
 
         $this->assertFalse($history->hasWorkflowFailed());
         $this->assertNull($history->getTimeStarted());

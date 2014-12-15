@@ -9,48 +9,80 @@ use Guzzle\Service\Resource\Model;
 class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
 {
     /**
-     * Check for a decision task
+     * Check for a work task
      *
-     * @param string $task_list
      * @return void
      */
-    public function checkForTask($task_list = null)
+    public function checkForTask()
     {
-        if (!$task_list) {
-            $task_list = $this->getWorkflow()->getTasklist();
-        }
-
         $task = $this->swf->pollForActivityTask(
             [
                 'domain'   => $this->getWorkflow()->getDomain(),
                 'taskList' => [
-                    'name' => $task_list,
+                    'name' => $this->getWorkflow()->getTasklist(),
                 ],
                 'identity' => $this->getIdentity(),
             ]
         );
 
         if ($task->get('startedEventId')) {
-            $this->processWorkTask($task);
+            $token = $task->get('taskToken');
+
+            try {
+                $event = $this->processWorkTask($task);
+                $this->respondSuccess($token, $event->getResult());
+            } catch (\Exception $e) {
+                $this->respondFailed($token, $e->getMessage());
+            }
         }
+    }
+
+    /**
+     * Respond to an activity task with success
+     *
+     * @param string $token
+     * @param string $result
+     */
+    protected function respondSuccess($token, $result)
+    {
+        $this->swf->respondActivityTaskCompleted(
+            [
+                'taskToken' => $token,
+                'result'    => $result,
+            ]
+        );
+    }
+
+    /**
+     * Respond to an activity task with a failure
+     *
+     * @param string $token
+     * @param string $reason
+     * @param string $detail
+     */
+    protected function respondFailed($token, $reason, $detail = null)
+    {
+        $this->swf->respondActivityTaskFailed(
+            [
+                'taskToken' => $token,
+                'reason'    => $reason,
+                'details'   => $detail,
+            ]
+        );
     }
 
     /**
      * Parses a Guzzle model returned from SWF and fires the task ready event
      *
      * @param Model $model
+     * @return WorkEvent
      */
     protected function processWorkTask(Model $model)
     {
-        if ($model->get('startedEventId') == 0) {
-            return;
-        }
-
         $event = new WorkEvent();
         $this->hydrateWorkflowEvent($event, $model);
         $event->setActivityId($model->get('activityId'));
         $event->setInput($model->get('input'));
-        $event->setControl($model->get('control'));
         $event->setActivityName($model->get('activityType')['name']);
         $event->setActivityVersion($model->get('activityType')['version']);
 
@@ -61,9 +93,11 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
         $context['activity_id']      = $event->getActivityId();
 
         $this->logger->info(
-            'Found work task for "'.$event->getWorkflowName().'/'.$event->getActivityId()."'",
+            'Found work task for "'.$event->getExecutionId().'/'.$event->getActivityId()."'",
             $context
         );
         $this->dispatch(Event::TASK_WORK_READY, $event);
+
+        return $event;
     }
 }

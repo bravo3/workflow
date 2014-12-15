@@ -32,15 +32,10 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
     /**
      * Check for a decision task
      *
-     * @param string $task_list
      * @return void
      */
-    public function checkForTask($task_list = null)
+    public function checkForTask()
     {
-        if (!$task_list) {
-            $task_list = $this->getWorkflow()->getTasklist();
-        }
-
         /** @var DecisionEvent */
         $event = null;
         $token = null;
@@ -49,7 +44,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
             $args = [
                 'domain'   => $this->getWorkflow()->getDomain(),
                 'taskList' => [
-                    'name' => $task_list,
+                    'name' => $this->getWorkflow()->getTasklist(),
                 ],
                 'identity' => $this->getIdentity(),
             ];
@@ -74,9 +69,14 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
         } while ($token = $model->get('nextPageToken'));
 
         if ($event) {
+            $context = $this->createEventContext($event);
+
+            $context['workflow_name']    = $event->getWorkflowName();
+            $context['workflow_version'] = $event->getWorkflowVersion();
+
             $this->logger->info(
                 'Found decision task for "'.$event->getWorkflowName()."'",
-                $this->createEventContext($event)
+                $context
             );
 
             // Dispatching an event here will let any number of deciders schedule tasks or modify the workflow result
@@ -163,16 +163,20 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
     /**
      * Parse an SWF event
      *
-     * @param array $history_item
+     * @param WorkflowHistory $history
+     * @param array           $history_item
      */
     private function parseHistoryItem(WorkflowHistory $history, array $history_item)
     {
         if (array_key_exists($history_item['eventType'], $this->command_map)) {
             $class = $this->command_map[$history_item['eventType']]['class'];
 
+            $timestamp = new \DateTime();
+            $timestamp->setTimestamp((int)$history_item['eventTimestamp']);
+
             /** @var HistoryCommandInterface $cmd */
             $cmd = new $class(
-                new \DateTime($history_item['eventTimestamp']),
+                $timestamp,
                 $history_item[$this->command_map[$history_item['eventType']]['args']],
                 $history_item['eventId']
             );

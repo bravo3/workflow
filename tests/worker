@@ -1,13 +1,12 @@
 #!/usr/bin/env php
 <?php
 use Bravo3\Properties\Conf;
-use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
+use Bravo3\Workflow\Drivers\Swf\SwfWorkerEngine;
 use Bravo3\Workflow\Drivers\Swf\SwfWorkflowEngine;
 use Bravo3\Workflow\Enum\Event;
-use Bravo3\Workflow\Events\CompletingWorkflowEvent;
 use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
-use Bravo3\Workflow\Services\Decider;
+use Bravo3\Workflow\Services\Worker;
 use Bravo3\Workflow\Tests\Resources\TestLogger;
 use Bravo3\Workflow\Workflow\YamlWorkflow;
 
@@ -18,7 +17,7 @@ $conf = Conf::getInstance();
 
 $logger = new TestLogger();
 
-$onPoll = function(PollingEvent $event) use ($logger) {
+$onPoll = function (PollingEvent $event) use ($logger) {
     $logger->info("Polling..");
 };
 
@@ -33,26 +32,21 @@ $workflow_engine = new SwfWorkflowEngine($conf['aws']);
 $workflow_engine->setLogger($logger);
 $workflow_engine->setWorkflow($wf);
 
-$logger->debug('Creating SWF decision engine..');
-$decision_engine = new SwfDecisionEngine($conf['aws']);
-$decision_engine->setLogger($logger);
-$decision_engine->setWorkflow($wf);
+$logger->debug('Creating SWF worker engine..');
+$worker_engine = new SwfWorkerEngine($conf['aws']);
+$worker_engine->setLogger($logger);
+$worker_engine->setWorkflow($wf);
 
-$logger->debug('Creating decider..');
-$decider = new Decider();
-$decider->setWorkflow($wf);
-$decider->setMemoryPool($pool);
+$logger->debug('Creating worker..');
+$worker = new Worker();
+$worker->setWorkflow($wf);
+$worker->setMemoryPool($pool);
 
 $logger->debug('Subscribing..');
-$decision_engine->addSubscriber($decider);
-$decision_engine->addListener(Event::DAEMON_POLLING, $onPoll);
-
-$logger->debug('Creating new workflow..');
-$wf = $workflow_engine->createWorkflow('test-'.time());
-$logger->info(" > Execution: ".$wf->getExecutionId());
-$logger->info(" > Run ID:    ".$wf->getRunId());
+$worker_engine->addSubscriber($worker);
+$worker_engine->addListener(Event::DAEMON_POLLING, $onPoll);
 
 $logger->debug('Starting daemon..');
-$decision_engine->daemonise();
+$worker_engine->daemonise();
 
 

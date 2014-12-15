@@ -93,7 +93,7 @@ class HistoryInspector
     }
 
     /**
-     * Get the count of activities with a control in a given state
+     * Get the count of activities with a result in a given state
      *
      * @param string           $control
      * @param HistoryItemState $state

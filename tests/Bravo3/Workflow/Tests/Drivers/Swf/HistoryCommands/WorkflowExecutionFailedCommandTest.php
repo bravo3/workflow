@@ -8,12 +8,15 @@ class WorkflowExecutionFailedCommandTest extends \PHPUnit_Framework_TestCase
 {
     public function testCommand()
     {
-        $timestamp  = 1326670266.115;
+        $timestamp = 1326670266.115;
+        $datestamp = new \DateTime();
+        $datestamp->setTimestamp($timestamp);
+
         $attributes = ['reason' => 'Gremlins'];
         $event_id   = 'test_'.rand(10000, 99999);
 
         $history = new WorkflowHistory();
-        $command = new WorkflowExecutionFailedCommand($timestamp, $attributes, $event_id);
+        $command = new WorkflowExecutionFailedCommand($datestamp, $attributes, $event_id);
 
         $this->assertFalse($history->hasWorkflowFailed());
         $this->assertNull($history->getTimeStarted());

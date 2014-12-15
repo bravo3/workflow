@@ -24,11 +24,9 @@ abstract class AbstractHistoryCommand implements HistoryCommandInterface
      */
     protected $event_id;
 
-    public function __construct($timestamp, array $attributes, $event_id)
+    public function __construct(\DateTime $timestamp, array $attributes, $event_id)
     {
-        $this->timestamp = new \DateTime();
-        $this->timestamp->setTimestamp((int)$timestamp);
-
+        $this->timestamp  = $timestamp;
         $this->attributes = $attributes;
         $this->event_id   = $event_id;
     }
