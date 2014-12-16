@@ -12,7 +12,6 @@ tasks:
         class: Bravo3\Workflow\Tests\Resources\Tasks\AlphaTask
         input: alpha
         control: alpha
-        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
@@ -41,7 +40,6 @@ tasks:
         class: Bravo3\Workflow\Tests\Resources\Tasks\CharlieTask
         input: charlie
         control: charlie
-        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10
@@ -53,7 +51,6 @@ tasks:
         class: Bravo3\Workflow\Tests\Resources\Tasks\OmegaTask
         input: should-never-get-run
         control: should-never-get-run
-        tasklist: test
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
         start_to_close_timeout: 10

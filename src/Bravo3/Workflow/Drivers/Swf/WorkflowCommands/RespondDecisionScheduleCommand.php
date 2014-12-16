@@ -45,6 +45,8 @@ class RespondDecisionScheduleCommand extends AbstractWorkflowCommand
 
         $i = 0;
         foreach ($this->getDecision()->getScheduledTasks() as $task) {
+            $tasklist = $task->getTasklist() ?: $this->workflow->getTasklist();
+
             $attribs = [
                 'activityType' => [
                     'name'    => $task->getActivityName(),
@@ -53,13 +55,10 @@ class RespondDecisionScheduleCommand extends AbstractWorkflowCommand
                 'activityId'   => $task->getActivityName().'.'.$task->getActivityVersion().'.'.$i++.'.'.time(),
                 'control'      => $task->getControl(),
                 'input'        => $task->getInput(),
+                'taskList'     => [
+                    'name' => $tasklist,
+                ]
             ];
-
-            if ($task->getTasklist()) {
-                $attribs['taskList'] = [
-                    'name' => $task->getTasklist(),
-                ];
-            }
 
             if ($task->getScheduleToCloseTimeout()) {
                 $attribs['scheduleToCloseTimeout'] = $task->getScheduleToCloseTimeout();
