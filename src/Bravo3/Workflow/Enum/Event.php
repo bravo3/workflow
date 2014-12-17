@@ -11,4 +11,6 @@ final class Event extends AbstractEnumeration
     const DECISION_SCHEDULE   = 'decision.schedule';    // A decider is scheduling a task
     const DECISION_COMPLETE   = 'decision.complete';    // A decider is completing a workflow
     const DECISION_FAIL       = 'decision.fail';        // A decider is failing a workflow
+    const WORKFLOW_CREATED    = 'workflow.created';        // A workflow has been created
+    const WORKFLOW_TERMINATED = 'workflow.terminated';        // A workflow has been terminated
 }

@@ -23,7 +23,7 @@ $onPoll = function (PollingEvent $event) use ($logger) {
 };
 
 $logger->debug('Creating memory pool..');
-$pool = new RedisMemoryPool('test', 600, $conf['redis']);
+$pool = new RedisMemoryPool('test-workflow', 600, $conf['redis']);
 
 $logger->debug('Creating YAML based workflow..');
 $wf = new YamlWorkflow(__DIR__.'/Bravo3/Workflow/Tests/Resources/TestSchema.yml');

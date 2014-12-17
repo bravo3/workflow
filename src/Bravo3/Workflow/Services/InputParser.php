@@ -97,11 +97,8 @@ class InputParser
         foreach ($this->history as $history_item) {
             /** @var WorkflowHistoryItem $history_item */
 
-            echo "*** Test '".$history_item->getActivityKey()."' against '".$in."'\n";
-
             if ($history_item->getActivityKey() == $in) {
                 $result = $history_item->getResult();
-                echo "*** Found: ".$result."\n";
             }
         }
 

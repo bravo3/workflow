@@ -7,9 +7,35 @@ exposure of decision and workflow handling.
 
 Example
 =======
-To quickly create a schema-based workflow using SWF, you can use factories provided and follow this example:
+To quickly create a schema-based workflow using SWF (see Building a Workflow), you can use factories provided:
   
-    TBA
+    $factory = new SchemaWorkflowFactory(
+        'Path/To/Schema.yml',
+        $aws_config,    // AWS config
+        $redis_config,  // Redis config
+        3600,           // Redis key timeout - should be longer than the workflow start-to-close timeout
+        'workflows'     // Redis namespace - used to isolate workflow activity on the server
+    );
+    
+This factory has all your workflow components will need. To create a new workflow: 
+
+    $factory->getWorkflowEngine()->createWorkflow('sample-workflow-name');
+    
+On the daemon side, to listen for decisions:
+
+    $factory->getDecisionEngine()->daemonise();
+
+And to listen for work tasks:
+
+    $factory->getWorkerEngine()->daemonise();
+    
+The `#daemonise()` functions run in a loop endlessly. To abort this loop you can pass it an abort flag 
+(`FlagInterface`), using a `MemoryFlag` would allow you to abort on a condition in the workflow.
+
+If you don't want to loop, you could just call `#checkForTask()`:
+
+    $factory->getWorkerEngine()->checkForTask();
+
 
 Application Structure
 =====================
@@ -17,12 +43,12 @@ The lowest level component is a decision or worker engine found in the Drivers n
 you must add the appropriate Decider or Worker service (Services namespace) as a subscriber.
  
 The engine classes will fire events when they receive decision or work tasks. The services will then action the task
-using a Workflow and WorkflowHistory entity.
+using a Workflow and WorkflowHistory entity. You can add multiple decision and worker services, each with their own
+logic. The bundled classes will follow the task requirements and close the workflow when there are no more tasks running
+or to be scheduled, but it is possible to completely rewrite this logic.
  
-Tasks (Tasks namespace) are worker components of a workflow. A task not only contains all information for scheduling 
-worker tasks in the workflow engine, but it allows for pre and post-execution code blocks which allow you to prepare or 
-handle the input/output of a worker task. The tasks `execute()` function contains the logic that should be run by the
-worker itself.
+Tasks are worker components of a workflow - these are executed by the Worker service and run independent of the 
+Decision service.
 
 Memory services are interfaces to a database platform which is used to store metadata created by worker tasks.
 

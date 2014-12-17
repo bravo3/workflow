@@ -93,7 +93,7 @@ class SwfWorkerEngine extends SwfEngine implements WorkerEngineInterface
         $context['activity_id']      = $event->getActivityId();
 
         $this->logger->info(
-            'Found work task for "'.$event->getExecutionId().'/'.$event->getActivityId()."'",
+            'Found work task for "'.$event->getExecutionId().'/'.$event->getActivityId().'"',
             $context
         );
         $this->dispatch(Event::TASK_WORK_READY, $event);

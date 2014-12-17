@@ -34,6 +34,7 @@ abstract class AbstractWorkflowCommand implements WorkflowCommandInterface
      *
      * @param string $key
      * @param mixed  $default
+     * @param bool   $mandatory
      * @return mixed
      */
     protected function getParameter($key, $default = null, $mandatory = false)

@@ -32,6 +32,10 @@ There are some PHP scripts in the root of the tests/ folder, to run a mock workf
 `tests/worker` scripts at the same time. You might want to start the worker first to avoid the aggressive timeouts on
 the test workflow. This will run a workflow built from a YamlSchema in the tests Resources directory.
 
+In addition to the above, you can also use the `tests/factory-decider` and `tests/factory-worker` scripts. These
+achieve the same except they use the `SchemaWorkflowFactory` class to build all services instead of manually creating
+them. This creates a much cleaner looking daemon.
+
 ### Termination Test
 
 TBA

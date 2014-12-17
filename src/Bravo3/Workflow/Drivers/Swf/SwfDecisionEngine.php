@@ -75,7 +75,7 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
             $context['workflow_version'] = $event->getWorkflowVersion();
 
             $this->logger->info(
-                'Found decision task for "'.$event->getWorkflowName()."'",
+                'Found decision task for "'.$event->getWorkflowName().'"',
                 $context
             );
 

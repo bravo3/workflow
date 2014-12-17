@@ -5,6 +5,8 @@ use Aws\Common\Aws;
 use Aws\Swf\SwfClient;
 use Bravo3\Workflow\Drivers\Swf\WorkflowCommands\CreateWorkflowCommand;
 use Bravo3\Workflow\Drivers\WorkflowEngineInterface;
+use Bravo3\Workflow\Enum\Event;
+use Bravo3\Workflow\Events\WorkflowSchemaEvent;
 use Bravo3\Workflow\Workflow\WorkflowAwareTrait;
 use Bravo3\Workflow\Workflow\WorkflowSchema;
 use Psr\Log\LoggerAwareTrait;
@@ -56,7 +58,11 @@ class SwfWorkflowEngine extends EventDispatcher implements WorkflowEngineInterfa
                 'tasklist'    => $this->getWorkflow()->getTasklist(),
             ]
         );
-        return $cmd->execute();
+
+        $schema = $cmd->execute();
+        $this->dispatch(Event::WORKFLOW_CREATED, new WorkflowSchemaEvent($schema));
+
+        return $schema;
     }
 
     /**
@@ -71,5 +77,7 @@ class SwfWorkflowEngine extends EventDispatcher implements WorkflowEngineInterfa
 
         // TODO: Implement terminateWorkflow() method.
         $this->logger->warning("(not implemented)");
+
+        //$this->dispatch(Event::WORKFLOW_TERMINATED, new WorkflowSchemaEvent($schema));
     }
 }
