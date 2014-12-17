@@ -15,6 +15,7 @@ class OmegaTask extends AbstractTask
     public function execute(WorkEvent $event)
     {
         $this->memory_pool->set('omega', "Hello World");
+        $this->memory_pool->set('state', 'FAILED');
         $event->setResult("oh ohh!");
     }
 }

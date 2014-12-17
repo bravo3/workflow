@@ -79,16 +79,16 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
                 $context
             );
 
-            // Dispatching an event here will let any number of deciders schedule tasks or modify the workflow result
+            // Dispatching an event here will let any number of deciders schedule tasks or modify the workflow reason
             $this->dispatch(Event::TASK_DECISION_READY, $event);
 
-            // This will return the decision result to SWF, while also firing notification events on each decision
+            // This will return the decision reason to SWF, while also firing notification events on each decision
             $this->processDecision($event->getDecision());
         }
     }
 
     /**
-     * Process a workflow decision, sending the result back to the workflow engine
+     * Process a workflow decision, sending the reason back to the workflow engine
      *
      * @param Decision $decision
      */
@@ -97,22 +97,36 @@ class SwfDecisionEngine extends SwfEngine implements DecisionEngineInterface
         switch ($decision->getWorkflowResult()) {
             // Complete a workflow
             case WorkflowResult::COMPLETE():
-                $this->dispatch(Event::DECISION_COMPLETE, new CompletingWorkflowEvent($this->getWorkflow()));
                 $class = 'RespondDecisionCompleteCommand';
+                $event = new CompletingWorkflowEvent(
+                    $this->getWorkflow(),
+                    $decision->getExecutionId(),
+                    $decision->getResult()
+                );
+                $this->dispatch(Event::DECISION_COMPLETE, $event);
+                $this->getWorkflow()->onWorkflowSuccess($event);
+                $this->getWorkflow()->onWorkflowComplete($event);
                 break;
 
             // Fail a workflow
             case WorkflowResult::FAIL():
-                $this->dispatch(Event::DECISION_FAIL, new FailingWorkflowEvent($this->getWorkflow()));
                 $class = 'RespondDecisionFailedCommand';
+                $event = new FailingWorkflowEvent(
+                    $this->getWorkflow(),
+                    $decision->getExecutionId(),
+                    $decision->getReason()
+                );
+                $this->dispatch(Event::DECISION_FAIL, $event);
+                $this->getWorkflow()->onWorkflowFailed($event);
+                $this->getWorkflow()->onWorkflowComplete($event);
                 break;
 
             // Send workflow commands
             case WorkflowResult::COMMAND():
+                $class = 'RespondDecisionScheduleCommand';
                 foreach ($decision->getScheduledTasks() as $task) {
                     $this->dispatch(Event::DECISION_SCHEDULE, new SchedulingTaskEvent($task));
                 }
-                $class = 'RespondDecisionScheduleCommand';
                 break;
 
             // Unsupported response

@@ -24,6 +24,11 @@ class Decision
     /**
      * @var string
      */
+    protected $execution_id;
+
+    /**
+     * @var string
+     */
     protected $result;
 
     /**
@@ -36,9 +41,10 @@ class Decision
      */
     protected $details;
 
-    public function __construct($token)
+    public function __construct($token, $execution_id)
     {
-        $this->decision_token = $token;
+        $this->decision_token  = $token;
+        $this->execution_id    = $execution_id;
         $this->workflow_result = WorkflowResult::COMMAND();
     }
 
@@ -172,5 +178,15 @@ class Decision
     {
         $this->result = $result;
         return $this;
+    }
+
+    /**
+     * Get workflow execution ID
+     *
+     * @return string
+     */
+    public function getExecutionId()
+    {
+        return $this->execution_id;
     }
 }

@@ -1,6 +1,9 @@
 <?php
 namespace Bravo3\Workflow\Workflow;
 
+use Bravo3\Workflow\Events\CompletingWorkflowEvent;
+use Bravo3\Workflow\Events\FailingWorkflowEvent;
+use Bravo3\Workflow\Events\WorkflowAwareEvent;
 use Bravo3\Workflow\Task\TaskSchema;
 
 interface WorkflowInterface
@@ -54,4 +57,28 @@ interface WorkflowInterface
      * @return bool
      */
     public function getJailMemoryPool();
+
+    /**
+     * Called when the workflow completes successfully
+     *
+     * @param CompletingWorkflowEvent $event
+     * @return void
+     */
+    public function onWorkflowSuccess(CompletingWorkflowEvent $event);
+
+    /**
+     * Called when the workflow fails
+     *
+     * @param FailingWorkflowEvent $event
+     * @return void
+     */
+    public function onWorkflowFailed(FailingWorkflowEvent $event);
+
+    /**
+     * Called when the workflow completes, regardless of success or failure
+     *
+     * @param WorkflowAwareEvent $event
+     * @return void
+     */
+    public function onWorkflowComplete(WorkflowAwareEvent $event);
 }

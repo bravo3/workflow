@@ -1,9 +1,11 @@
 <?php
 namespace Bravo3\Workflow\Workflow;
 
+use Bravo3\Workflow\Events\CompletingWorkflowEvent;
+use Bravo3\Workflow\Events\FailingWorkflowEvent;
+use Bravo3\Workflow\Events\WorkflowAwareEvent;
 use Bravo3\Workflow\Exceptions\InsufficientDataException;
 use Bravo3\Workflow\Exceptions\NotReadableException;
-use Bravo3\Workflow\Exceptions\UnexpectedValueException;
 use Bravo3\Workflow\Task\TaskSchema;
 use Symfony\Component\Yaml\Yaml;
 
@@ -131,5 +133,55 @@ class YamlWorkflow implements WorkflowInterface
     public function getWorkflowVersion()
     {
         return $this->getSchemaProperty('workflow.workflow_version', null, true);
+    }
+
+    /**
+     * Call a callback function by schema pathname
+     *
+     * @param string $path
+     * @param array  $args
+     * @return mixed
+     */
+    private function triggerCallback($path, $args = [])
+    {
+        $fn = $this->getSchemaProperty($path);
+        if ($fn) {
+            return call_user_func_array($fn, $args);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Called when the workflow completes successfully
+     *
+     * @param CompletingWorkflowEvent $event
+     * @return void
+     */
+    public function onWorkflowSuccess(CompletingWorkflowEvent $event)
+    {
+        $this->triggerCallback('workflow.on_success', [$event]);
+    }
+
+    /**
+     * Called when the workflow fails
+     *
+     * @param FailingWorkflowEvent $event
+     * @return void
+     */
+    public function onWorkflowFailed(FailingWorkflowEvent $event)
+    {
+        $this->triggerCallback('workflow.on_fail', [$event]);
+    }
+
+    /**
+     * Called when the workflow completes, regardless of success or failure
+     *
+     * @param WorkflowAwareEvent $event
+     * @return void
+     */
+    public function onWorkflowComplete(WorkflowAwareEvent $event)
+    {
+        $this->triggerCallback('workflow.on_complete', [$event]);
     }
 }

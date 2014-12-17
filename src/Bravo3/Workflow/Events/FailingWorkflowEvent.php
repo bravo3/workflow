@@ -1,29 +1,28 @@
 <?php
 namespace Bravo3\Workflow\Events;
 
-use Bravo3\Workflow\Task\TaskSchema;
 use Bravo3\Workflow\Workflow\WorkflowInterface;
-use Symfony\Component\EventDispatcher\Event;
 
-class FailingWorkflowEvent extends Event
+class FailingWorkflowEvent extends WorkflowAwareEvent
 {
     /**
-     * @var WorkflowInterface
+     * @var string
      */
-    protected $workflow;
+    protected $reason;
 
-    public function __construct(WorkflowInterface $workflow)
+    public function __construct(WorkflowInterface $workflow, $execution_id, $reason = null)
     {
-        $this->workflow = $workflow;
+        parent::__construct($workflow, $execution_id);
+        $this->reason = $reason;
     }
 
     /**
-     * Get Workflow
+     * Get failure reason
      *
-     * @return WorkflowInterface
+     * @return string
      */
-    public function getWorkflow()
+    public function getReason()
     {
-        return $this->workflow;
+        return $this->reason;
     }
 }

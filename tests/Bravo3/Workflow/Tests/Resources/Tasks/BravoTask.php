@@ -15,6 +15,7 @@ class BravoTask extends AbstractTask
     public function execute(WorkEvent $event)
     {
         $this->memory_pool->set('bravo', 2);
+        $this->memory_pool->set('state', 'WORKING');
         $event->setResult("bravo's your man");
     }
 }

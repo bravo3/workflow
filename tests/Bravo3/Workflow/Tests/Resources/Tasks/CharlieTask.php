@@ -15,6 +15,7 @@ class CharlieTask extends AbstractTask
     public function execute(WorkEvent $event)
     {
         $this->memory_pool->set('charlie', 3);
+        $this->memory_pool->set('state', 'COMPLETE');
         $event->setResult("charlie wins!");
     }
 }

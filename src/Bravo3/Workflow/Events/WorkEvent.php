@@ -117,7 +117,7 @@ class WorkEvent extends WorkflowEvent
     }
 
     /**
-     * Get task result
+     * Get task reason
      *
      * @return string
      */
@@ -127,7 +127,7 @@ class WorkEvent extends WorkflowEvent
     }
 
     /**
-     * Set task result
+     * Set task reason
      *
      * @param string $result
      * @return $this

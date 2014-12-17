@@ -4,11 +4,11 @@ use Bravo3\Properties\Conf;
 use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
 use Bravo3\Workflow\Drivers\Swf\SwfWorkflowEngine;
 use Bravo3\Workflow\Enum\Event;
-use Bravo3\Workflow\Events\CompletingWorkflowEvent;
 use Bravo3\Workflow\Events\PollingEvent;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
 use Bravo3\Workflow\Services\Decider;
 use Bravo3\Workflow\Tests\Resources\TestLogger;
+use Bravo3\Workflow\Tests\Resources\Workflow\Callbacks;
 use Bravo3\Workflow\Workflow\YamlWorkflow;
 
 require_once('bootstrap.php');
@@ -18,12 +18,16 @@ $conf = Conf::getInstance();
 
 $logger = new TestLogger();
 
+Callbacks::getInstance()->setLogger($logger);
+
 $onPoll = function(PollingEvent $event) use ($logger) {
     $logger->info("Polling..");
 };
 
 $logger->debug('Creating memory pool..');
 $pool = new RedisMemoryPool('test', 600, $conf['redis']);
+
+Callbacks::getInstance()->setMemoryPool($pool);
 
 $logger->debug('Creating YAML based workflow..');
 $wf = new YamlWorkflow(__DIR__.'/Bravo3/Workflow/Tests/Resources/TestSchema.yml');

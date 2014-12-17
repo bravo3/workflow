@@ -1,29 +1,28 @@
 <?php
 namespace Bravo3\Workflow\Events;
 
-use Bravo3\Workflow\Task\TaskSchema;
 use Bravo3\Workflow\Workflow\WorkflowInterface;
-use Symfony\Component\EventDispatcher\Event;
 
-class CompletingWorkflowEvent extends Event
+class CompletingWorkflowEvent extends WorkflowAwareEvent
 {
     /**
-     * @var WorkflowInterface
+     * @var string
      */
-    protected $workflow;
+    protected $result;
 
-    public function __construct(WorkflowInterface $workflow)
+    public function __construct(WorkflowInterface $workflow, $execution_id, $result = null)
     {
-        $this->workflow = $workflow;
+        parent::__construct($workflow, $execution_id);
+        $this->result = $result;
     }
 
     /**
-     * Get Workflow
+     * Get workflow result
      *
-     * @return WorkflowInterface
+     * @return string
      */
-    public function getWorkflow()
+    public function getResult()
     {
-        return $this->workflow;
+        return $this->result;
     }
 }

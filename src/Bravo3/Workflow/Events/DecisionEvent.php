@@ -38,7 +38,7 @@ class DecisionEvent extends WorkflowEvent
     public function getDecision()
     {
         if (!$this->decision) {
-            $this->decision = new Decision($this->getToken());
+            $this->decision = new Decision($this->getToken(), $this->getExecutionId());
         }
 
         return $this->decision;

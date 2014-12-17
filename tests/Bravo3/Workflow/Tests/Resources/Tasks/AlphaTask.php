@@ -15,6 +15,7 @@ class AlphaTask extends AbstractTask
     public function execute(WorkEvent $event)
     {
         $this->memory_pool->set('alpha', 1);
+        $this->memory_pool->set('state', 'STARTING');
         $event->setResult('done woo!');
     }
 }

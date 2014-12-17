@@ -5,6 +5,9 @@ workflow:
     workflow_name: test
     workflow_version: 1
     jail_memory_pool: true
+    on_success: Bravo3\Workflow\Tests\Resources\Workflow\Callbacks::onWorkflowSuccess
+    on_fail: Bravo3\Workflow\Tests\Resources\Workflow\Callbacks::onWorkflowFail
+    on_complete: Bravo3\Workflow\Tests\Resources\Workflow\Callbacks::onWorkflowComplete
 
 tasks:
     alpha/1:
