@@ -38,5 +38,5 @@ them. This creates a much cleaner looking daemon.
 
 ### Termination Test
 
-TBA
-
+Running the `tests/terminate-test` script will create and terminate a workflow. You can view the result in the SWF
+control panel.
