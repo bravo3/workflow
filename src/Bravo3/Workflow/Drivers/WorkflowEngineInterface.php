@@ -21,7 +21,8 @@ interface WorkflowEngineInterface extends EventDispatcherInterface, LoggerAwareI
      * Terminate a workflow
      *
      * @param WorkflowSchema $workflow
+     * @param string         $reason
      * @return void
      */
-    public function terminateWorkflow(WorkflowSchema $workflow);
+    public function terminateWorkflow(WorkflowSchema $workflow, $reason = null);
 }

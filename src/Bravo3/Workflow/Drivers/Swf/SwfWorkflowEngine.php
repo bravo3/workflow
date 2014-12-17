@@ -4,6 +4,7 @@ namespace Bravo3\Workflow\Drivers\Swf;
 use Aws\Common\Aws;
 use Aws\Swf\SwfClient;
 use Bravo3\Workflow\Drivers\Swf\WorkflowCommands\CreateWorkflowCommand;
+use Bravo3\Workflow\Drivers\Swf\WorkflowCommands\TerminateWorkflowCommand;
 use Bravo3\Workflow\Drivers\WorkflowEngineInterface;
 use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\WorkflowSchemaEvent;
@@ -69,15 +70,21 @@ class SwfWorkflowEngine extends EventDispatcher implements WorkflowEngineInterfa
      * Terminate a workflow
      *
      * @param WorkflowSchema $workflow
+     * @param string         $reason
      * @return void
      */
-    public function terminateWorkflow(WorkflowSchema $workflow)
+    public function terminateWorkflow(WorkflowSchema $workflow, $reason = null)
     {
         $this->logger->info("Terminating workflow: ".$workflow->getExecutionId()."/".$workflow->getRunId());
 
-        // TODO: Implement terminateWorkflow() method.
-        $this->logger->warning("(not implemented)");
+        $cmd = new TerminateWorkflowCommand(
+            $this->swf, $this->getWorkflow(), [
+                'workflow_id' => $workflow->getExecutionId(),
+                'reason'      => $reason,
+            ]
+        );
 
-        //$this->dispatch(Event::WORKFLOW_TERMINATED, new WorkflowSchemaEvent($schema));
+        $cmd->execute();
+        $this->dispatch(Event::WORKFLOW_TERMINATED, new WorkflowSchemaEvent($workflow));
     }
 }

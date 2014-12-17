@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+use Bravo3\Properties\Conf;
+use Bravo3\Workflow\Factories\SchemaWorkflowFactory;
+use Bravo3\Workflow\Tests\Resources\TestLogger;
+use Bravo3\Workflow\Tests\Resources\Workflow\Callbacks;
+
+require_once('bootstrap.php');
+
+Conf::init(__DIR__.'/config');
+$conf = Conf::getInstance();
+
+$factory = new SchemaWorkflowFactory(
+    __DIR__.'/Bravo3/Workflow/Tests/Resources/TestSchema.yml',
+    $conf['aws'],   // AWS config
+    $conf['redis'], // Redis config
+    60,             // Redis key timeout - should be longer than the workflow start-to-close timeout
+    'test-workflow' // Redis namespace - used to isolate workflow activity on the server
+);
+
+$factory->setLogger(new TestLogger());
+$factory->getWorkflow()->setDomain($conf['swf']['domain']);
+
+// Callback class referenced in the test schema needs to know the memory pool
+Callbacks::getInstance()->setMemoryPool($factory->getMemoryPool());
+Callbacks::getInstance()->setLogger($factory->getLogger());
+
+// Create & terminate a workflow
+$wf = $factory->getWorkflowEngine()->createWorkflow('factory-test-'.time());
+sleep(1);
+$factory->getWorkflowEngine()->terminateWorkflow($wf, 'Kill Test');
