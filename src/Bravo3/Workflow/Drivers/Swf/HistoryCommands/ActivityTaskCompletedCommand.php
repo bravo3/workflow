@@ -11,6 +11,8 @@ class ActivityTaskCompletedCommand extends AbstractHistoryCommand
     {
         $item = $this->getHistoryItem($history, $this->getAttribute('scheduledEventId'));
         $item->setTimeEnded($this->timestamp);
+        $item->setResult($this->getAttribute('result'));
         $item->setState(HistoryItemState::COMPLETED());
+        $history->add($item);
     }
 }

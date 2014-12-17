@@ -60,8 +60,7 @@ class Decider extends WorkflowService implements EventSubscriberInterface
         // Check if we need to fail
         if (($this->getFailOnActivityFailure() && $history->hasActivityFailure()) || $history->hasWorkflowFailed()) {
             $decision->setWorkflowResult(WorkflowResult::FAIL());
-            $decision->setReason(static::MSG_WF_FAILED);
-            $decision->setDetails(implode(", ", $history->getErrorMessages()));
+            $decision->setReason(implode(", ", $history->getErrorMessages()));
             return;
         }
 
@@ -71,10 +70,11 @@ class Decider extends WorkflowService implements EventSubscriberInterface
             $this->getMemoryPool();
 
         // Check if we need to schedule
+        $parser    = new InputParser($history, $memory_pool);
         $scheduler = new Scheduler($history, $memory_pool);
         foreach ($tasks as $task) {
             if ($scheduler->canScheduleTask($task)) {
-                $decision->scheduledTask($task);
+                $decision->scheduledTask($parser->compileTaskInput($task));
             }
         }
 

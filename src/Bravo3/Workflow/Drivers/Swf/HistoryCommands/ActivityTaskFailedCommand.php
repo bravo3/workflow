@@ -17,7 +17,7 @@ class ActivityTaskFailedCommand extends AbstractHistoryCommand
         $item = $this->getHistoryItem($history, $this->getAttribute('scheduledEventId'));
         $item->setTimeEnded($this->timestamp);
         $item->setState(HistoryItemState::FAILED());
-        $item->setErrorMessage('Failed: '.$reason);
-        $history->setActivityFailed();
+        $item->setErrorMessage($reason);
+        $history->add($item);
     }
 }

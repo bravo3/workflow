@@ -5,6 +5,12 @@ The purpose of this library is to create a decision engine to augment workflow s
 The decision engine allows you to create a simple schema for the workflow and minimise programmatic business logic or
 exposure of decision and workflow handling.
 
+Example
+=======
+To quickly create a schema-based workflow using SWF, you can use factories provided and follow this example:
+  
+    TBA
+
 Application Structure
 =====================
 The lowest level component is a decision or worker engine found in the Drivers namespace. Once an engine is created,

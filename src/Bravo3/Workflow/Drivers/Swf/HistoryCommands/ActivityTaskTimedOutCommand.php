@@ -17,7 +17,7 @@ class ActivityTaskTimedOutCommand extends AbstractHistoryCommand
         $item = $this->getHistoryItem($history, $this->getAttribute('scheduledEventId'));
         $item->setTimeEnded($this->timestamp);
         $item->setState(HistoryItemState::TIMED_OUT());
-        $item->setErrorMessage('Timeout: '.$reason);
-        $history->setActivityFailed();
+        $item->setErrorMessage('(Timeout) '.$reason);
+        $history->add($item);
     }
 }

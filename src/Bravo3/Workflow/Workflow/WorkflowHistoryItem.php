@@ -327,7 +327,7 @@ class WorkflowHistoryItem
      */
     public function getActivityKey()
     {
-        return $this->getActivityName().'-'.$this->getActivityVersion();
+        return $this->getActivityName().'/'.$this->getActivityVersion();
     }
 
     /**

@@ -26,7 +26,7 @@ class Callbacks extends AbstractWorkflowCallback
      * @param FailingWorkflowEvent $event
      * @return void
      */
-    public static function onWorkflowFailed(FailingWorkflowEvent $event)
+    public static function onWorkflowFail(FailingWorkflowEvent $event)
     {
         $logger = self::getInstance()->getLogger();
         $logger->debug("Workflow failed: ".$event->getReason());
@@ -40,12 +40,10 @@ class Callbacks extends AbstractWorkflowCallback
      */
     public static function onWorkflowComplete(WorkflowAwareEvent $event)
     {
+        $memory_pool = self::getInstance()->getMemoryPoolForWorkflow($event->getWorkflow(), $event->getExecutionId());
         $logger = self::getInstance()->getLogger();
         $logger->debug("Workflow complete");
-        $logger->debug(
-            "State flag: ".self::getInstance()->
-            getMemoryPoolForWorkflow($event->getWorkflow(), $event->getExecutionId())->
-            get('state')
-        );
+        $logger->debug("State flag: ".$memory_pool->get('state'));
+        $memory_pool->set("complete", '1');
     }
 }

@@ -12,5 +12,6 @@ class ActivityTaskStartedCommand extends AbstractHistoryCommand
         $item = $this->getHistoryItem($history, $this->getAttribute('scheduledEventId'));
         $item->setTimeStarted($this->timestamp);
         $item->setState(HistoryItemState::RUNNING());
+        $history->add($item);
     }
 }

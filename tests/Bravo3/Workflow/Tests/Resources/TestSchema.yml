@@ -24,7 +24,7 @@ tasks:
             activity:
                 - alpha/1
         class: Bravo3\Workflow\Tests\Resources\Tasks\BravoTask
-        input: bravo
+        input: $state
         control: bravo
         tasklist: test
         schedule_to_start_timeout: 5
@@ -41,7 +41,7 @@ tasks:
                 alpha: "1"
                 bravo: "2"
         class: Bravo3\Workflow\Tests\Resources\Tasks\CharlieTask
-        input: charlie
+        input: @bravo/1
         control: charlie
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15

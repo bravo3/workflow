@@ -17,7 +17,6 @@ class ActivityTaskScheduledCommand extends AbstractHistoryCommand
         $item->setControl($this->getAttribute('control'));
         $item->setActivityName($this->getAttribute(['activityType', 'name']));
         $item->setActivityVersion($this->getAttribute(['activityType', 'version']));
-
         $history->add($item);
     }
 }

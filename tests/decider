@@ -5,6 +5,7 @@ use Bravo3\Workflow\Drivers\Swf\SwfDecisionEngine;
 use Bravo3\Workflow\Drivers\Swf\SwfWorkflowEngine;
 use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\PollingEvent;
+use Bravo3\Workflow\Flags\MemoryFlag;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
 use Bravo3\Workflow\Services\Decider;
 use Bravo3\Workflow\Tests\Resources\TestLogger;
@@ -52,11 +53,15 @@ $decision_engine->addSubscriber($decider);
 $decision_engine->addListener(Event::DAEMON_POLLING, $onPoll);
 
 $logger->debug('Creating new workflow..');
-$wf = $workflow_engine->createWorkflow('test-'.time());
+$execution_id = 'unit-test-'.time();
+$wf = $workflow_engine->createWorkflow($execution_id);
 $logger->info(" > Execution: ".$wf->getExecutionId());
 $logger->info(" > Run ID:    ".$wf->getRunId());
 
+$abort_flag = new MemoryFlag($pool, ':'.$execution_id.':complete');
+
 $logger->debug('Starting daemon..');
-$decision_engine->daemonise();
+$decision_engine->daemonise($abort_flag);
 
-
+// Pass a flag to let the worker (which doesn't know the execution ID) abort, too
+$pool->set(":global-complete", "1");

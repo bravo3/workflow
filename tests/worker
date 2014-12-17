@@ -5,6 +5,7 @@ use Bravo3\Workflow\Drivers\Swf\SwfWorkerEngine;
 use Bravo3\Workflow\Drivers\Swf\SwfWorkflowEngine;
 use Bravo3\Workflow\Enum\Event;
 use Bravo3\Workflow\Events\PollingEvent;
+use Bravo3\Workflow\Flags\MemoryFlag;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
 use Bravo3\Workflow\Services\Worker;
 use Bravo3\Workflow\Tests\Resources\TestLogger;
@@ -46,7 +47,10 @@ $logger->debug('Subscribing..');
 $worker_engine->addSubscriber($worker);
 $worker_engine->addListener(Event::DAEMON_POLLING, $onPoll);
 
+// Decider will set this for us when the workflow completes
+$abort_flag = new MemoryFlag($pool, ':global-complete');
+
 $logger->debug('Starting daemon..');
-$worker_engine->daemonise();
+$worker_engine->daemonise($abort_flag);
 
 

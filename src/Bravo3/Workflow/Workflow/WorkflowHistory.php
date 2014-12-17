@@ -77,6 +77,7 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
             case HistoryItemState::FAILED():
             case HistoryItemState::TIMED_OUT():
                 $this->setActivityFailed();
+                $this->error_messages[] = $item->getErrorMessage();
             default:
                 return;
         }
@@ -196,7 +197,6 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
     /**
      * Mark the workflow as having a failed activity
      *
-     * @param boolean $activity_error
      * @return $this
      */
     public function setActivityFailed()
@@ -206,7 +206,7 @@ class WorkflowHistory implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * Get the error messages relating to the workflows failed state
+     * Get the error messages relating to the activities or workflow state that may have caused the failure
      *
      * @return string[]
      */
