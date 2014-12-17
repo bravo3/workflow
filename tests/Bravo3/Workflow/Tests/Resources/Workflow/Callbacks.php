@@ -4,7 +4,9 @@ namespace Bravo3\Workflow\Tests\Resources\Workflow;
 use Bravo3\Workflow\Events\CompletingWorkflowEvent;
 use Bravo3\Workflow\Events\FailingWorkflowEvent;
 use Bravo3\Workflow\Events\WorkflowAwareEvent;
+use Bravo3\Workflow\Memory\MemoryPoolInterface;
 use Bravo3\Workflow\Workflow\AbstractWorkflowCallback;
+use Bravo3\Workflow\Workflow\WorkflowHistory;
 
 class Callbacks extends AbstractWorkflowCallback
 {

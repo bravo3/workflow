@@ -39,6 +39,7 @@ class InputParser
         $compiled = clone $task;
         $input    = $task->getInput();
 
+        // Parse special input types
         if (strlen($input) > 1) {
             $prefix = $input{0};
 
@@ -55,6 +56,16 @@ class InputParser
                 default:
                     break;
             }
+        }
+
+        // Pass-through the input factory
+        if ($task->getInputFactory()) {
+            $compiled->setInput(
+                call_user_func_array(
+                    $task->getInputFactory(),
+                    [$compiled->getInput(), $this->history, $this->memory_pool]
+                )
+            );
         }
 
         return $compiled;

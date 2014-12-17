@@ -38,6 +38,11 @@ class TaskSchema
     /**
      * @var string
      */
+    protected $input_factory;
+
+    /**
+     * @var string
+     */
     protected $control;
 
     /**
@@ -86,6 +91,7 @@ class TaskSchema
             'retry'                     => 0,
             'class'                     => null,
             'input'                     => null,
+            'input_factory'             => null,
             'tasklist'                  => null,
             'control'                   => null,
             'schedule_to_close_timeout' => null,
@@ -411,6 +417,28 @@ class TaskSchema
     public function setTasklist($tasklist)
     {
         $this->tasklist = $tasklist;
+        return $this;
+    }
+
+    /**
+     * Get InputFactory
+     *
+     * @return string
+     */
+    public function getInputFactory()
+    {
+        return $this->input_factory;
+    }
+
+    /**
+     * Set InputFactory
+     *
+     * @param string $input_factory
+     * @return $this
+     */
+    public function setInputFactory($input_factory)
+    {
+        $this->input_factory = $input_factory;
         return $this;
     }
 }

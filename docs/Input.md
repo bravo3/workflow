@@ -34,13 +34,17 @@ to the factory, and the result of the factory is passed to the task.
     input: $somevariable
     input_factory: Path\To\FactoryClass::inputFactory
     
-The input factory should look something like
+The input factory should have the following signature:
+    
+    public static function fn($input, WorkflowHistory $history, MemoryPoolInterface $memory_pool)
+
+For example:
 
     class FactoryClass
     {
-        public static function inputFactory($input)
+        public static function buildInput($input, WorkflowHistory $history, MemoryPoolInterface $memory_pool)
         {
-            return json_encode($input);
+            return json_encode([$input, $memory_pool->get('xxx')]);
         }
     }
 

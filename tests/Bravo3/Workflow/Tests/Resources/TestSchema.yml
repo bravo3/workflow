@@ -42,6 +42,7 @@ tasks:
                 bravo: "2"
         class: Bravo3\Workflow\Tests\Resources\Tasks\CharlieTask
         input: @bravo/1
+        input_factory: Bravo3\Workflow\Tests\Resources\Tasks\CharlieTask::buildInput
         control: charlie
         schedule_to_start_timeout: 5
         schedule_to_close_timeout: 15
