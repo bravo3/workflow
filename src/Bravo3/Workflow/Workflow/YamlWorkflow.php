@@ -85,6 +85,30 @@ class YamlWorkflow implements WorkflowInterface
     }
 
     /**
+     * Override the workflow domain
+     *
+     * @param string $domain
+     * @return $this
+     */
+    public function setDomain($domain)
+    {
+        $this->schema['workflow']['domain'] = $domain;
+        return $this;
+    }
+
+    /**
+     * Override the workflow tasklist
+     *
+     * @param string $tasklist
+     * @return $this
+     */
+    public function setTasklist($tasklist)
+    {
+        $this->schema['workflow']['tasklist'] = $tasklist;
+        return $this;
+    }
+
+    /**
      * Get the decision tasklist
      *
      * @return string

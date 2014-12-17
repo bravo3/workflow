@@ -19,6 +19,7 @@ $factory = new SchemaWorkflowFactory(
 );
 
 $factory->setLogger(new TestLogger());
+$factory->getWorkflow()->setDomain($conf['swf']['domain']);
 
 // Callback class referenced in the test schema needs to know the memory pool
 Callbacks::getInstance()->setMemoryPool($factory->getMemoryPool());

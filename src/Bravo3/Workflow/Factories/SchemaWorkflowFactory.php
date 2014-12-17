@@ -8,7 +8,6 @@ use Bravo3\Workflow\Memory\MemoryPoolInterface;
 use Bravo3\Workflow\Memory\RedisMemoryPool;
 use Bravo3\Workflow\Services\Decider;
 use Bravo3\Workflow\Services\Worker;
-use Bravo3\Workflow\Workflow\WorkflowInterface;
 use Bravo3\Workflow\Workflow\YamlWorkflow;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -29,7 +28,7 @@ class SchemaWorkflowFactory
     protected $logger;
 
     /**
-     * @var WorkflowInterface
+     * @var YamlWorkflow
      */
     protected $workflow;
 
@@ -231,7 +230,7 @@ class SchemaWorkflowFactory
     /**
      * Get Workflow
      *
-     * @return WorkflowInterface
+     * @return YamlWorkflow
      */
     public function getWorkflow()
     {

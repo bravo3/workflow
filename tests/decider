@@ -32,6 +32,7 @@ Callbacks::getInstance()->setMemoryPool($pool);
 
 $logger->debug('Creating YAML based workflow..');
 $wf = new YamlWorkflow(__DIR__.'/Bravo3/Workflow/Tests/Resources/TestSchema.yml');
+$wf->setDomain($conf['swf']['domain']);
 
 $logger->debug('Creating SWF workflow engine..');
 $workflow_engine = new SwfWorkflowEngine($conf['aws']);

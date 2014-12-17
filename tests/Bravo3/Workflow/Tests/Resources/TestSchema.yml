@@ -1,6 +1,6 @@
 workflow:
     start_to_close_timeout: 60
-    domain: workflow_jordon
+    domain: override_me
     tasklist: test
     workflow_name: test
     workflow_version: 1

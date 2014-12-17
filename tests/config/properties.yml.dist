@@ -2,7 +2,9 @@ redis:
     host: 127.0.0.1
     port: 6379
     database: 1
-    swf_key: xxx
-    swf_secret: xxx
-    swf_region: ap-southeast-2
-    swf_domain: xxx
+aws:
+    key:
+    secret:
+    region:
+swf:
+    domain:

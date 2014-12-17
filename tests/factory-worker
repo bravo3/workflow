@@ -18,6 +18,7 @@ $factory = new SchemaWorkflowFactory(
 );
 
 $factory->setLogger(new TestLogger());
+$factory->getWorkflow()->setDomain($conf['swf']['domain']);
 
 // Listen for work
 $factory->getWorkerEngine()->daemonise();
