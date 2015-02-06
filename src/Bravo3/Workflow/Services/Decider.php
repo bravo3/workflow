@@ -2,9 +2,15 @@
 namespace Bravo3\Workflow\Services;
 
 use Bravo3\Workflow\Enum\Event;
+use Bravo3\Workflow\Enum\HistoryItemState;
 use Bravo3\Workflow\Enum\WorkflowResult;
 use Bravo3\Workflow\Events\DecisionEvent;
 use Bravo3\Workflow\Memory\JailedMemoryPool;
+use Bravo3\Workflow\Memory\MemoryPoolInterface;
+use Bravo3\Workflow\Task\TaskInterface;
+use Bravo3\Workflow\Workflow\Decision;
+use Bravo3\Workflow\Workflow\WorkflowHistory;
+use Bravo3\Workflow\Workflow\WorkflowHistoryItem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -57,17 +63,30 @@ class Decider extends WorkflowService implements EventSubscriberInterface
         $decision = $event->getDecision();
         $tasks    = $this->getWorkflow()->getTasks();
 
+        // Create a memory pool jailed to this execution
+        $memory_pool = $this->getWorkflow()->getJailMemoryPool() ?
+            JailedMemoryPool::jail($this->getMemoryPool(), ':'.$event->getExecutionId()) :
+            $this->getMemoryPool();
+
+        // Check if we need to execute any task events
+        /** @var WorkflowHistoryItem $history_item */
+        foreach ($history as $history_item) {
+            $id = $history_item->getEventId();
+
+            if ($history_item->getState() == HistoryItemState::COMPLETED()) {
+                if ($memory_pool->get('history:'.$id.':completed') === null) {
+                    $this->runTaskDecider($history_item, $decision, $memory_pool);
+                    $memory_pool->set('history:'.$id.':completed', 1);
+                }
+            }
+        }
+
         // Check if we need to fail
         if (($this->getFailOnActivityFailure() && $history->hasActivityFailure()) || $history->hasWorkflowFailed()) {
             $decision->setWorkflowResult(WorkflowResult::FAIL());
             $decision->setReason(implode(", ", $history->getErrorMessages()));
             return;
         }
-
-        // Create a memory pool jailed to this execution
-        $memory_pool = $this->getWorkflow()->getJailMemoryPool() ?
-            JailedMemoryPool::jail($this->getMemoryPool(), ':'.$event->getExecutionId()) :
-            $this->getMemoryPool();
 
         // Check if we need to schedule
         $parser    = new InputParser($history, $memory_pool);
@@ -81,6 +100,36 @@ class Decider extends WorkflowService implements EventSubscriberInterface
         // Check if we need to complete
         if (count($decision->getScheduledTasks()) == 0 && !$scheduler->haveOpenActivities()) {
             $decision->setWorkflowResult(WorkflowResult::COMPLETE());
+        }
+    }
+
+    /**
+     * Run the tasks success decider, allowing the task a chance to schedule some events
+     *
+     * @param WorkflowHistoryItem $history_item
+     * @param Decision            $decision
+     * @param MemoryPoolInterface $memory_pool
+     */
+    protected function runTaskDecider(
+        WorkflowHistoryItem $history_item,
+        Decision $decision,
+        MemoryPoolInterface $memory_pool
+    ) {
+        foreach ($this->getWorkflow()->getTasks() as $task) {
+            if ($history_item->getActivityName() == $task->getActivityName() &&
+                $history_item->getActivityVersion() == $task->getActivityVersion()
+            ) {
+                $class = $task->getClass();
+
+                /** @var TaskInterface $obj */
+                $obj = new $class($memory_pool, $history_item->getInput());
+
+                if (!($obj instanceof TaskInterface)) {
+                    throw new \DomainException("Class for task ".$task->getActivityName()." is not a TaskInterface");
+                }
+
+                $obj->onSuccess($this->getWorkflow(), $history_item, $decision);
+            }
         }
     }
 }

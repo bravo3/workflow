@@ -17,14 +17,16 @@ class BravoTask extends AbstractTask
      */
     public function execute(WorkEvent $event)
     {
-        if ($event->getInput() !== self::EXPECTED_INPUT) {
+        $event->setResult("bravo's your man");
+
+        if ($event->getInput() == 'lalala') {
+            $this->memory_pool->set('bravo', 2);
+        } elseif ($event->getInput() !== self::EXPECTED_INPUT) {
             throw new TaskFailedException(
                 "Input is incorrect. Should be: '".self::EXPECTED_INPUT."', is '".$event->getInput()."'", $event
             );
         }
 
-        $this->memory_pool->set('bravo', 2);
         $this->memory_pool->set('state', 'WORKING');
-        $event->setResult("bravo's your man");
     }
 }

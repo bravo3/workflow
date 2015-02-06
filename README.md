@@ -36,6 +36,13 @@ If you don't want to loop, you could just call `#checkForTask()`:
 
     $factory->getWorkerEngine()->checkForTask();
 
+Ad-Hoc Scheduling
+-----------------
+It's possible for a task to schedule additional tasks upon success (or manipulate the workflow in any way). This
+nature is controlled at the DECISION level, so the task must first succeed and then it's `onSuccess()` function will
+be executed by the decider. You will receive a `Decision` object which you can then use to add decisions for the
+decider to execute (fail execution, schedule task, etc) and use the result from the `execute()` function of your task
+that was executed by the worker.
 
 Application Structure
 =====================
