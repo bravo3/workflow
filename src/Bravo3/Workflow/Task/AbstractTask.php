@@ -19,10 +19,16 @@ abstract class AbstractTask implements TaskInterface
      */
     protected $memory_pool;
 
-    public function __construct(MemoryPoolInterface $memory_pool, $input)
+    /**
+     * @var mixed
+     */
+    protected $aux_payload;
+
+    public function __construct(MemoryPoolInterface $memory_pool, $input, $aux_payload = null)
     {
         $this->memory_pool = $memory_pool;
         $this->input       = $input;
+        $this->aux_payload = $aux_payload;
     }
 
     /**
@@ -56,5 +62,15 @@ abstract class AbstractTask implements TaskInterface
         }
 
         throw new NotFoundException("Task '".$activity_name."' not found");
+    }
+
+    /**
+     * Get AuxPayload
+     *
+     * @return mixed
+     */
+    protected function getAuxPayload()
+    {
+        return $this->aux_payload;
     }
 }

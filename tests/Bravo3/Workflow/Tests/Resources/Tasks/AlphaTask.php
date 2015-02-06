@@ -2,6 +2,7 @@
 namespace Bravo3\Workflow\Tests\Resources\Tasks;
 
 use Bravo3\Workflow\Events\WorkEvent;
+use Bravo3\Workflow\Exceptions\TaskFailedException;
 use Bravo3\Workflow\Task\AbstractTask;
 use Bravo3\Workflow\Workflow\Decision;
 use Bravo3\Workflow\Workflow\WorkflowHistoryItem;
@@ -17,6 +18,10 @@ class AlphaTask extends AbstractTask
      */
     public function execute(WorkEvent $event)
     {
+        if ($this->getAuxPayload() !== 'payload') {
+            throw new TaskFailedException("Payload incorrect (".$this->getAuxPayload().")", $event);
+        }
+
         $this->memory_pool->set('alpha', 1);
         $this->memory_pool->set('state', 'STARTING');
         $event->setResult('done woo!');
@@ -35,10 +40,12 @@ class AlphaTask extends AbstractTask
      */
     public function onSuccess(WorkflowInterface $workflow, WorkflowHistoryItem $history_item, Decision $decision)
     {
+        if ($this->getAuxPayload() !== 'payload') {
+            throw new \Exception("Payload incorrect (".$this->getAuxPayload().")");
+        }
+
         $schema = $this->getTask($workflow, 'bravo');
         $schema->setInput('lalala');
         $decision->scheduledTask($schema);
     }
-
-
 }

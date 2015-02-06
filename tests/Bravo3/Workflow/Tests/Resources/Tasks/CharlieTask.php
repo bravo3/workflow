@@ -20,6 +20,10 @@ class CharlieTask extends AbstractTask
      */
     public function execute(WorkEvent $event)
     {
+        if ($this->getAuxPayload() !== 'payload') {
+            throw new TaskFailedException("Payload incorrect (".$this->getAuxPayload().")", $event);
+        }
+
         $input = json_decode($event->getInput(), true);
 
         if ($input['bravo-result'] !== self::EXPECTED_RESULT) {

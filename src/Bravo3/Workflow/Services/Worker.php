@@ -13,7 +13,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class Worker extends WorkflowService implements EventSubscriberInterface
 {
-
     /**
      * Returns an array of event names this subscriber wants to listen to.
      *
@@ -65,7 +64,7 @@ class Worker extends WorkflowService implements EventSubscriberInterface
         $class = $task->getClass();
 
         /** @var TaskInterface $obj */
-        $obj = new $class($memory_pool, $event->getInput());
+        $obj = new $class($memory_pool, $event->getInput(), $this->getAuxPayload());
 
         if (!($obj instanceof TaskInterface)) {
             throw new \DomainException("Class for task ".$task->getActivityName()." is not a TaskInterface");

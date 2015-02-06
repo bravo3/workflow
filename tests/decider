@@ -48,6 +48,7 @@ $logger->debug('Creating decider..');
 $decider = new Decider();
 $decider->setWorkflow($wf);
 $decider->setMemoryPool($pool);
+$decider->setAuxPayload('payload');
 
 $logger->debug('Subscribing..');
 $decision_engine->addSubscriber($decider);

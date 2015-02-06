@@ -122,7 +122,7 @@ class Decider extends WorkflowService implements EventSubscriberInterface
                 $class = $task->getClass();
 
                 /** @var TaskInterface $obj */
-                $obj = new $class($memory_pool, $history_item->getInput());
+                $obj = new $class($memory_pool, $history_item->getInput(), $this->getAuxPayload());
 
                 if (!($obj instanceof TaskInterface)) {
                     throw new \DomainException("Class for task ".$task->getActivityName()." is not a TaskInterface");

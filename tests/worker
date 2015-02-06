@@ -43,6 +43,7 @@ $logger->debug('Creating worker..');
 $worker = new Worker();
 $worker->setWorkflow($wf);
 $worker->setMemoryPool($pool);
+$worker->setAuxPayload('payload');
 
 $logger->debug('Subscribing..');
 $worker_engine->addSubscriber($worker);

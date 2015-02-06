@@ -17,6 +17,10 @@ class BravoTask extends AbstractTask
      */
     public function execute(WorkEvent $event)
     {
+        if ($this->getAuxPayload() !== 'payload') {
+            throw new TaskFailedException("Payload incorrect (".$this->getAuxPayload().")", $event);
+        }
+
         $event->setResult("bravo's your man");
 
         if ($event->getInput() == 'lalala') {

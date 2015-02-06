@@ -63,6 +63,11 @@ class SchemaWorkflowFactory
     protected $swf;
 
     /**
+     * @var mixed
+     */
+    protected $aux_payload;
+
+    /**
      * Build all required workflow components using:
      * - Workflow Controller: Amazon SWF
      * - Workflow Class:      YamlWorkflow
@@ -77,13 +82,15 @@ class SchemaWorkflowFactory
      * @param array  $redis     Redis parameters
      * @param int    $ttl       Redis key TTL
      * @param string $namespace Redis key namespace
+     * @param mixed  $payload   Payload to pass onto the Worker and Decider engines
      */
-    public function __construct($schema_fn, array $swf, array $redis, $ttl = 3600, $namespace = null)
+    public function __construct($schema_fn, array $swf, array $redis, $ttl = 3600, $namespace = null, $payload = null)
     {
         $this->workflow    = new YamlWorkflow($schema_fn);
         $this->memory_pool = new RedisMemoryPool($namespace, $ttl, $redis);
         $this->logger      = new NullLogger();
         $this->swf         = $swf;
+        $this->aux_payload = $payload;
     }
 
     /**
@@ -94,6 +101,7 @@ class SchemaWorkflowFactory
         $this->decider = new Decider();
         $this->decider->setWorkflow($this->workflow);
         $this->decider->setMemoryPool($this->memory_pool);
+        $this->decider->setAuxPayload($this->aux_payload);
 
         $this->decision_engine = new SwfDecisionEngine($this->swf);
         $this->decision_engine->setWorkflow($this->workflow);
@@ -109,6 +117,7 @@ class SchemaWorkflowFactory
         $this->worker = new Worker();
         $this->worker->setWorkflow($this->workflow);
         $this->worker->setMemoryPool($this->memory_pool);
+        $this->worker->setAuxPayload($this->aux_payload);
 
         $this->worker_engine = new SwfWorkerEngine($this->swf);
         $this->worker_engine->setWorkflow($this->workflow);

@@ -44,6 +44,14 @@ be executed by the decider. You will receive a `Decision` object which you can t
 decider to execute (fail execution, schedule task, etc) and use the result from the `execute()` function of your task
 that was executed by the worker.
 
+Passing Data To The Worker Tasks
+--------------------------------
+The Worker and Decider classes have auxiliary data that can be set by calling `setAuxPayload()`. If you are using a
+factory, the `$payload` parameter of the factory will set the aux payload on any Worker/Decider classes it creates.
+ 
+In a task you can reference this data (`getAuxPayload()` if using the AbstractTask) - this is useful for giving the
+task access to a larger application engine. A useful payload might be a DI container.
+
 Application Structure
 =====================
 The lowest level component is a decision or worker engine found in the Drivers namespace. Once an engine is created,

@@ -10,4 +10,31 @@ class WorkflowService implements WorkflowAwareInterface, MemoryPoolAwareInterfac
 {
     use WorkflowAwareTrait;
     use MemoryPoolAwareTrait;
+
+    /**
+     * @var mixed
+     */
+    protected $aux_payload;
+
+    /**
+     * Get auxiliary payload
+     *
+     * @return mixed
+     */
+    public function getAuxPayload()
+    {
+        return $this->aux_payload;
+    }
+
+    /**
+     * Set auxiliary payload
+     *
+     * @param mixed $aux_payload
+     * @return $this
+     */
+    public function setAuxPayload($aux_payload)
+    {
+        $this->aux_payload = $aux_payload;
+        return $this;
+    }
 }

@@ -16,17 +16,18 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
     {
         Conf::init(__DIR__.'/../../../../config/');
 
-        $memory_pool = new RedisMemoryPool('decider-tests', 60, Conf::get('redis'));
+        $memory_pool = new RedisMemoryPool('decider-tests-'.time(), 60, Conf::get('redis'));
 
         $decider = new Decider();
         $decider->setWorkflow(new YamlWorkflow(__DIR__.'/../Resources/TestSchema.yml'));
-        $decider->setMemoryPool($memory_pool);
+        $decider->setMemoryPool($memory_pool)->setAuxPayload('payload');
 
         $this->assertTrue($decider->getWorkflow()->getJailMemoryPool());
+        $execution_id = 'test-execution';
 
         // Workflow started -
         $event1 = new DecisionEvent();
-        $event1->setExecutionId('test-execution');
+        $event1->setExecutionId($execution_id);
         $decider->processDecisionEvent($event1);
 
         $this->assertCount(1, $event1->getDecision()->getScheduledTasks());
@@ -46,12 +47,12 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $alpha->setControl('alpha')->setInput('alpha')->setResult("Hello World");
 
         $event2 = new DecisionEvent();
-        $event2->setExecutionId('test-execution');
+        $event2->setExecutionId($execution_id);
         $event2->getHistory()->add($alpha);
 
         $decider->processDecisionEvent($event2);
 
-        $this->assertCount(1, $event2->getDecision()->getScheduledTasks());
+        $this->assertCount(2, $event2->getDecision()->getScheduledTasks());
         $this->assertEquals(WorkflowResult::COMMAND(), $event2->getDecision()->getWorkflowResult());
         $task = $event2->getDecision()->getScheduledTasks()[0];
         $this->assertEquals('bravo', $task->getControl());
@@ -69,7 +70,7 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $memory_pool->set(":test-execution:bravo", 2);
 
         $event3 = new DecisionEvent();
-        $event3->setExecutionId('test-execution');
+        $event3->setExecutionId($execution_id);
         $event3->getHistory()->add($alpha);
         $event3->getHistory()->add($bravo);
         $decider->processDecisionEvent($event3);
@@ -89,7 +90,7 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $charlie->setControl('charlie')->setInput('charlie')->setResult("Hello World");
 
         $event4 = new DecisionEvent();
-        $event4->setExecutionId('test-execution');
+        $event4->setExecutionId($execution_id);
         $event4->getHistory()->add($alpha);
         $event4->getHistory()->add($bravo);
         $event4->getHistory()->add($charlie);
@@ -136,5 +137,4 @@ class DeciderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $event2->getDecision()->getScheduledTasks());
         $this->assertEquals(WorkflowResult::FAIL(), $event2->getDecision()->getWorkflowResult());
     }
-
 }

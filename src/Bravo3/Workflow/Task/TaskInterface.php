@@ -9,7 +9,7 @@ use Bravo3\Workflow\Workflow\WorkflowInterface;
 
 interface TaskInterface
 {
-    public function __construct(MemoryPoolInterface $memory_pool, $input);
+    public function __construct(MemoryPoolInterface $memory_pool, $input, $aux_payload = null);
 
     /**
      * Code to be executed by the WORKER when the task is run
