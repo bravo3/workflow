@@ -56,8 +56,14 @@ abstract class AbstractTask implements TaskInterface
     protected function getTask(WorkflowInterface $workflow, $activity_name, $activity_version = null)
     {
         foreach ($workflow->getTasks() as $task) {
-            if ($task->getActivityName() == 'bravo') {
-                return clone $task;
+            if ($task->getActivityName() == $activity_name) {
+                if ($activity_version !== null) {
+                    if ($task->getActivityVersion() == $activity_version) {
+                        return clone $task;
+                    }
+                } else {
+                    return clone $task;
+                }
             }
         }
 
