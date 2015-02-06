@@ -24,11 +24,6 @@ abstract class AbstractEngine extends EventDispatcher
     protected $abort_flag;
 
     /**
-     * @var WorkflowInterface
-     */
-    protected $workflow;
-
-    /**
      * @var string
      */
     protected $identity = 'Workflow Engine';
