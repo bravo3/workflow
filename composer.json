@@ -18,8 +18,8 @@
         "eloquent/enumeration": "~5.1",
         "psr/log": "~1.0",
         "predis/predis": "~1.0",
-        "symfony/event-dispatcher": "~2.5",
-        "symfony/yaml": "~2.5",
+        "symfony/event-dispatcher": ">=2.5",
+        "symfony/yaml": ">=2.5",
         "aws/aws-sdk-php": "~2.7"
     },
     "require-dev": {
